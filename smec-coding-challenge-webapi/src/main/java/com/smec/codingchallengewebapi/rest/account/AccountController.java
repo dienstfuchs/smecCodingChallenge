@@ -22,9 +22,8 @@ public class AccountController {
 	}
 
 	@GetMapping
-	public AccountDTO  getAllAccounts() {
-		return new AccountDTO("test");
-		//return accountService.findAll();
+	public List<AccountDTO>  getAllAccounts() {
+		return accountService.findAll();
 	}
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

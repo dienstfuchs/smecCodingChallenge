@@ -44,7 +44,7 @@ public class AccountServiceImpl implements AccountService {
 		if (account == null) {
 			throw new AccountNotFoundException(accountName);
 		}
-		
+		account.setName(newAccount.getName());
 		return AccountConverter.toDTO(accountRepository.save(account));
 	}
 
