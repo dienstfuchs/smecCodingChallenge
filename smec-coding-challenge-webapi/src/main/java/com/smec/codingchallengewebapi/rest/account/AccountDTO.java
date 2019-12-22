@@ -4,6 +4,9 @@ public class AccountDTO {
 
 	private String name;
 	
+	protected AccountDTO() {
+	}
+	
 	public AccountDTO(String name) {
 		this.name = name;
 	}

@@ -7,6 +7,9 @@ public class EventDTO {
 	private LocalDateTime happenedAt;
 	private String type;
 
+	protected EventDTO() {
+	}
+	
 	public EventDTO(LocalDateTime happenedAt, String type) {
 		this.happenedAt = happenedAt;
 		this.type = type;

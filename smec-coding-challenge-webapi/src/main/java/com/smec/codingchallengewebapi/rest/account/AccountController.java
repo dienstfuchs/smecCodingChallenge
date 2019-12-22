@@ -26,7 +26,7 @@ public class AccountController {
 		return accountService.findAll();
 	}
 
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping()
 	AccountDTO createAccount(@RequestBody AccountDTO account) {
 		return accountService.createAccount(account);
 	}

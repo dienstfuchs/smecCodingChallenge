@@ -10,16 +10,17 @@ import com.smec.codingchallengewebapi.entities.Account;
 import com.smec.codingchallengewebapi.persistence.AccountRepository;
 import com.smec.codingchallengewebapi.rest.account.AccountAlreadyExistsException;
 import com.smec.codingchallengewebapi.rest.account.AccountDTO;
-import com.smec.codingchallengewebapi.rest.account.AccountNotFoundException;
 import com.smec.codingchallengewebapi.rest.account.AccountService;
 
 @Component
 public class AccountServiceImpl implements AccountService {
 
 	private final AccountRepository accountRepository;
+	private final AccountResolver accountResolver;
 
-	protected AccountServiceImpl(AccountRepository accountRepository) {
+	protected AccountServiceImpl(AccountRepository accountRepository, AccountResolver accountResolver) {
 		this.accountRepository = accountRepository;
+		this.accountResolver = accountResolver;
 	}
 
 	@Override
@@ -40,10 +41,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public AccountDTO updateAccount(String accountName, AccountDTO newAccount) {
-		Account account = accountRepository.findByName(accountName);
-		if (account == null) {
-			throw new AccountNotFoundException(accountName);
-		}
+		Account account = accountResolver.findAccountByNameOrThrow(accountName);
 		account.setName(newAccount.getName());
 		return AccountConverter.toDTO(accountRepository.save(account));
 	}

@@ -7,41 +7,33 @@ import org.springframework.stereotype.Component;
 
 import com.smec.codingchallengewebapi.entities.Account;
 import com.smec.codingchallengewebapi.entities.Event;
-import com.smec.codingchallengewebapi.persistence.AccountRepository;
 import com.smec.codingchallengewebapi.persistence.EventRepository;
-import com.smec.codingchallengewebapi.rest.account.AccountNotFoundException;
 import com.smec.codingchallengewebapi.rest.event.EventDTO;
 import com.smec.codingchallengewebapi.rest.event.EventService;
 
 @Component
 public class EventServiceImpl implements EventService {
 
-	private final AccountRepository accountRepository;
+	private final AccountResolver accountResolver;
 	private final EventRepository eventRepository;
 
-	public EventServiceImpl(AccountRepository accountRepository, EventRepository eventRepository) {
-		this.accountRepository = accountRepository;
+	public EventServiceImpl(AccountResolver accountResolver, EventRepository eventRepository) {
+		this.accountResolver = accountResolver;
 		this.eventRepository = eventRepository;
 	}
 
 	@Override
 	public List<EventDTO> getAllEventsByAccountName(String accountName) {
-		Account account = accountRepository.findByName(accountName);
-		if (account == null) {
-			throw new AccountNotFoundException(accountName);
-		}
+		Account account = accountResolver.findAccountByNameOrThrow(accountName);
 		return eventRepository.findByAccount(account).stream().map(event -> EventConverter.toDTO(event))
 				.collect(Collectors.toList());
 	}
 
 	@Override
 	public EventDTO createEvent(EventDTO eventDTO, String accountName) {
-		Account account = accountRepository.findByName(accountName);
-		if (account == null) {
-			throw new AccountNotFoundException(accountName);
-		}
+		Account account = accountResolver.findAccountByNameOrThrow(accountName);
 		Event createdEvent = eventRepository.save(EventConverter.toEntity(eventDTO, account));
 		return EventConverter.toDTO(createdEvent);
 	}
-
+	
 }
