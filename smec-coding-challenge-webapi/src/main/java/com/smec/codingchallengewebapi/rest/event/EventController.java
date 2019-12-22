@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.smec.codingchallengewebapi.entities.Event;
-
 @RestController
 public class EventController {
 
@@ -20,13 +18,13 @@ public class EventController {
 	}
 
 	@GetMapping("/accounts/{accountName}/events")
-	public List<Event> getAllEvents(@PathVariable String accountName) {
+	public List<EventDTO> getAllEvents(@PathVariable String accountName) {
 		return eventService.getAllEventsByAccountName(accountName);
 	}
 
-	@PostMapping
-	Event createEvent(@RequestBody Event event) {
-		return eventService.createEvent(event);
+	@PostMapping("/accounts/{accountName}/events")
+	EventDTO createEvent(@RequestBody EventDTO event, @PathVariable String accountName) {
+		return eventService.createEvent(event, accountName);
 	}
 
 }
