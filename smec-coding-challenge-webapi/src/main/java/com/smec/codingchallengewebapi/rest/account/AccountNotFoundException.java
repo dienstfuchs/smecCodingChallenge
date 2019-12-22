@@ -1,4 +1,4 @@
-package com.smec.codingchallengewebapi.rest;
+package com.smec.codingchallengewebapi.rest.account;
 
 public class AccountNotFoundException extends RuntimeException {
 	

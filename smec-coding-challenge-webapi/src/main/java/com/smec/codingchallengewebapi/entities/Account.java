@@ -1,20 +1,32 @@
 package com.smec.codingchallengewebapi.entities;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Account {
 
-	private int id;
-	private String name;
+	@Id
+	@GeneratedValue
+	private long id;
 
-	public Account(int id, String name) {
-		this.id = id;
+	@Column(nullable = false, unique = true)
+	private String name;
+	
+	public Account() {
+	}
+
+	public Account(String name) {
 		this.name = name;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -30,7 +42,7 @@ public class Account {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}

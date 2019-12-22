@@ -1,4 +1,4 @@
-package com.smec.codingchallengewebapi.rest;
+package com.smec.codingchallengewebapi.rest.account;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
