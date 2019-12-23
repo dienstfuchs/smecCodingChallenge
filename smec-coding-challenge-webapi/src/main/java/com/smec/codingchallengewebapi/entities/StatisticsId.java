@@ -1,40 +1,21 @@
 package com.smec.codingchallengewebapi.entities;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.ManyToOne;
+@SuppressWarnings("serial")
+public class StatisticsId implements Serializable {
 
-@Entity
-@IdClass(StatisticsId.class)
-public class Statistics {
-	
-	@Id
-	@Column(nullable = false)
 	private LocalDate day;
-	
-	@Id
-	@Column(nullable = false)
 	private String type;
-	
-	@Column(nullable = false)
-	private long count;
-	
-	@Id
-	@ManyToOne(fetch = FetchType.LAZY)
-	private Account account;
-	
-	protected Statistics() {
+	private Long account;
+
+	protected StatisticsId() {
 	}
 
-	public Statistics(LocalDate day, String type, int count, Account account) {
+	public StatisticsId(LocalDate day, String type, Long account) {
 		this.day = day;
 		this.type = type;
-		this.count = count;
 		this.account = account;
 	}
 
@@ -54,19 +35,11 @@ public class Statistics {
 		this.type = type;
 	}
 
-	public long getCount() {
-		return count;
-	}
-
-	public void setCount(long count) {
-		this.count = count;
-	}
-
-	public Account getAccount() {
+	public Long getAccount() {
 		return account;
 	}
 
-	public void setAccount(Account account) {
+	public void setAccount(Long account) {
 		this.account = account;
 	}
 
@@ -75,7 +48,6 @@ public class Statistics {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((account == null) ? 0 : account.hashCode());
-		result = prime * result + (int) (count ^ (count >>> 32));
 		result = prime * result + ((day == null) ? 0 : day.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
@@ -89,13 +61,11 @@ public class Statistics {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Statistics other = (Statistics) obj;
+		StatisticsId other = (StatisticsId) obj;
 		if (account == null) {
 			if (other.account != null)
 				return false;
 		} else if (!account.equals(other.account))
-			return false;
-		if (count != other.count)
 			return false;
 		if (day == null) {
 			if (other.day != null)
@@ -109,6 +79,5 @@ public class Statistics {
 			return false;
 		return true;
 	}
-
 
 }
