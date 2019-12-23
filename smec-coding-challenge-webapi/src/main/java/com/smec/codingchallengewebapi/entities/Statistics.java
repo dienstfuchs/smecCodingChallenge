@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
@@ -13,8 +12,7 @@ import javax.persistence.ManyToOne;
 public class Statistics {
 
 	@Id
-	@GeneratedValue
-	private long id;
+	private String id;
 
 	@Column(nullable = false)
 	private LocalDate day;
@@ -36,13 +34,15 @@ public class Statistics {
 		this.type = type;
 		this.count = count;
 		this.account = account;
+		
+		this.id = this.day.toString() + "_" + this.type + "_" + this.account.getId();
 	}
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -85,7 +85,7 @@ public class Statistics {
 		result = prime * result + ((account == null) ? 0 : account.hashCode());
 		result = prime * result + (int) (count ^ (count >>> 32));
 		result = prime * result + ((day == null) ? 0 : day.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -111,7 +111,10 @@ public class Statistics {
 				return false;
 		} else if (!day.equals(other.day))
 			return false;
-		if (id != other.id)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (type == null) {
 			if (other.type != null)
@@ -121,6 +124,5 @@ public class Statistics {
 		return true;
 	}
 
-	
 
 }

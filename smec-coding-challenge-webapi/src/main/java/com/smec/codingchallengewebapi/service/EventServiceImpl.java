@@ -37,14 +37,7 @@ public class EventServiceImpl implements EventService {
 		Account account = accountResolver.findAccountByNameOrThrow(accountName);
 		Event createdEvent = eventRepository.save(EventConverter.toEntity(eventDTO, account));
 		EventDTO createdEventDTO = EventConverter.toDTO(createdEvent);
-		try {
-	
 		statisticsService.createStatisticsForEvent(createdEventDTO, accountName);
-		
-		}
-		catch(RuntimeException e) {
-			System.out.println("test");
-		}
 		return createdEventDTO;
 	}
 	
