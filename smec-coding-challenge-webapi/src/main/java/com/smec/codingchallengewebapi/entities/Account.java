@@ -15,7 +15,7 @@ public class Account {
 	@Column(nullable = false, unique = true)
 	private String name;
 	
-	public Account() {
+	protected Account() {
 	}
 
 	public Account(String name) {

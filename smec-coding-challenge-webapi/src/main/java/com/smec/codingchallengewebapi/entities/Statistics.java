@@ -1,6 +1,6 @@
 package com.smec.codingchallengewebapi.entities;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,27 +10,31 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Event {
+public class Statistics {
 
 	@Id
 	@GeneratedValue
 	private long id;
 
 	@Column(nullable = false)
-	private LocalDateTime happenedAt;
-
+	private LocalDate day;
+	
 	@Column(nullable = false)
 	private String type;
-
+	
+	@Column(nullable = false)
+	private long count;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Account account;
-
-	protected Event() {
+	
+	protected Statistics() {
 	}
 
-	public Event(LocalDateTime happenedAt, String type, Account account) {
-		this.happenedAt = happenedAt;
+	public Statistics(LocalDate day, String type, int count, Account account) {
+		this.day = day;
 		this.type = type;
+		this.count = count;
 		this.account = account;
 	}
 
@@ -42,12 +46,12 @@ public class Event {
 		this.id = id;
 	}
 
-	public LocalDateTime getHappenedAt() {
-		return happenedAt;
+	public LocalDate getDay() {
+		return day;
 	}
 
-	public void setHappenedAt(LocalDateTime happenedAt) {
-		this.happenedAt = happenedAt;
+	public void setDay(LocalDate day) {
+		this.day = day;
 	}
 
 	public String getType() {
@@ -56,6 +60,14 @@ public class Event {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public long getCount() {
+		return count;
+	}
+
+	public void setCount(long count) {
+		this.count = count;
 	}
 
 	public Account getAccount() {
@@ -71,7 +83,8 @@ public class Event {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((account == null) ? 0 : account.hashCode());
-		result = prime * result + ((happenedAt == null) ? 0 : happenedAt.hashCode());
+		result = prime * result + (int) (count ^ (count >>> 32));
+		result = prime * result + ((day == null) ? 0 : day.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
@@ -85,16 +98,18 @@ public class Event {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Event other = (Event) obj;
+		Statistics other = (Statistics) obj;
 		if (account == null) {
 			if (other.account != null)
 				return false;
 		} else if (!account.equals(other.account))
 			return false;
-		if (happenedAt == null) {
-			if (other.happenedAt != null)
+		if (count != other.count)
+			return false;
+		if (day == null) {
+			if (other.day != null)
 				return false;
-		} else if (!happenedAt.equals(other.happenedAt))
+		} else if (!day.equals(other.day))
 			return false;
 		if (id != other.id)
 			return false;
@@ -105,5 +120,7 @@ public class Event {
 			return false;
 		return true;
 	}
+
+	
 
 }
