@@ -30,49 +30,48 @@ public class CodingChallengeWebapiApplication {
 			AccountDTO magi = new AccountDTO("magi");
 			accountService.createAccount(magi);
 
-			/*
-			 * ExecutorService executor = Executors.newFixedThreadPool(10);
-			 * 
-			 * Future f1 = executor.submit(() -> { addEvents(eventService, "dienstfuchs");
-			 * }); Thread.sleep(1000); Future f2 = executor.submit(() -> {
-			 * addEvents(eventService, "dienstfuchs"); }); Thread.sleep(1000); Future f3 =
-			 * executor.submit(() -> { addEvents(eventService, "dienstfuchs"); });
-			 * 
-			 * f1.get(); f2.get(); f3.get();
-			 */
+			ExecutorService executor = Executors.newFixedThreadPool(10);
 
-			
-			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0),
-			  "Event 1"), "dienstfuchs"); eventService.createEvent(new
-			  EventDTO(LocalDateTime.of(2019, 12, 22, 15, 1), "Event 1"), "dienstfuchs");
-			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 23, 15, 1),
-			  "Event 1"), "dienstfuchs"); eventService.createEvent(new
-			  EventDTO(LocalDateTime.of(2019, 12, 22, 15, 2), "Event 2"), "dienstfuchs");
-			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 22, 15, 4),
-			  "Event 2"), "dienstfuchs"); eventService.createEvent(new
-			  EventDTO(LocalDateTime.of(2019, 12, 23, 15, 4), "Event 2"), "dienstfuchs");
-			  
-			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 21, 15, 0),
-			  "Event 3"), "magi"); eventService.createEvent(new
-			  EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0), "Event 3"), "magi");
-			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0),
-			  "Event 3"), "magi"); eventService.createEvent(new
-			  EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0), "Event 3"), "magi");
-			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0),
-			  "Event 3"), "magi"); eventService.createEvent(new
-			  EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0), "Event 3"), "magi");
-			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0),
-			  "Event 3"), "magi");
-			 
+			Future f1 = executor.submit(() -> {
+				addEvents(eventService, "dienstfuchs");
+			});
+			Future f2 = executor.submit(() -> {
+				addEvents(eventService, "dienstfuchs");
+			});
+
+			f1.get();
+			f2.get();
+
+//			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0),
+//			  "Event 1"), "dienstfuchs"); eventService.createEvent(new
+//			  EventDTO(LocalDateTime.of(2019, 12, 22, 15, 1), "Event 1"), "dienstfuchs");
+//			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 23, 15, 1),
+//			  "Event 1"), "dienstfuchs"); eventService.createEvent(new
+//			  EventDTO(LocalDateTime.of(2019, 12, 22, 15, 2), "Event 2"), "dienstfuchs");
+//			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 22, 15, 4),
+//			  "Event 2"), "dienstfuchs"); eventService.createEvent(new
+//			  EventDTO(LocalDateTime.of(2019, 12, 23, 15, 4), "Event 2"), "dienstfuchs");
+//			  
+//			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 21, 15, 0),
+//			  "Event 3"), "magi"); eventService.createEvent(new
+//			  EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0), "Event 3"), "magi");
+//			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0),
+//			  "Event 3"), "magi"); eventService.createEvent(new
+//			  EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0), "Event 3"), "magi");
+//			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0),
+//			  "Event 3"), "magi"); eventService.createEvent(new
+//			  EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0), "Event 3"), "magi");
+//			  eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, 22, 15, 0),
+//			  "Event 3"), "magi");
+
 		};
 	}
 
 	private void addEvents(EventService eventService, String accountName) {
 
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 2; i++) {
 			int a = i % 2;
 			eventService.createEvent(new EventDTO(LocalDateTime.of(2019, 12, a + 1, 15, 0), "Event 1"), accountName);
-			System.out.println(i);
 		}
 
 	}
