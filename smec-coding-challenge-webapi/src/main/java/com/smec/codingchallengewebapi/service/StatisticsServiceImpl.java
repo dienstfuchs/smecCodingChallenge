@@ -3,6 +3,8 @@ package com.smec.codingchallengewebapi.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
@@ -33,21 +35,20 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	@Override
+	@Transactional
 	public void createStatisticsForEvent(EventDTO eventDTO, String accountName) {
 		Account account = accountResolver.findAccountByNameOrThrow(accountName);
 		Statistics statistics = findByAccountAndDayAndType(eventDTO, account);
 		if(statistics == null) {
 			try {
-				statistics = statisticsRepository.save(new Statistics(eventDTO.getHappenedAt().toLocalDate(), eventDTO.getType(), 0, account));
+				statistics = statisticsRepository.saveAndFlush(new Statistics(eventDTO.getHappenedAt().toLocalDate(), eventDTO.getType(), 0, account));
 			}
 			catch(DataIntegrityViolationException ex) {
 				// could happen if an other request creates the statistics at the same time.
 				statistics = findByAccountAndDayAndType(eventDTO, account);
 			}
 		}
-		// TODO make an atomar call
-		statistics.setCount(statistics.getCount() + 1);
-		statisticsRepository.save(statistics); 
+		statisticsRepository.updateCounter(account, eventDTO.getHappenedAt().toLocalDate(), eventDTO.getType());
 	}
 	
 	private Statistics findByAccountAndDayAndType(EventDTO event, Account account) {

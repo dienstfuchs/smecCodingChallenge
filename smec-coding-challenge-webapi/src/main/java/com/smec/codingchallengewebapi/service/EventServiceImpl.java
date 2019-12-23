@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.smec.codingchallengewebapi.entities.Account;
 import com.smec.codingchallengewebapi.entities.Event;
@@ -34,12 +33,18 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
-	@Transactional
 	public EventDTO createEvent(EventDTO eventDTO, String accountName) {
 		Account account = accountResolver.findAccountByNameOrThrow(accountName);
 		Event createdEvent = eventRepository.save(EventConverter.toEntity(eventDTO, account));
 		EventDTO createdEventDTO = EventConverter.toDTO(createdEvent);
+		try {
+	
 		statisticsService.createStatisticsForEvent(createdEventDTO, accountName);
+		
+		}
+		catch(RuntimeException e) {
+			System.out.println("test");
+		}
 		return createdEventDTO;
 	}
 	
