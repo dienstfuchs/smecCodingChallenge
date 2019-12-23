@@ -5,29 +5,34 @@ import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@IdClass(StatisticsId.class)
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"day", "type", "account_id"})})
 public class Statistics {
-	
+
 	@Id
+	@GeneratedValue
+	private long id;
+
 	@Column(nullable = false)
 	private LocalDate day;
-	
-	@Id
+
 	@Column(nullable = false)
 	private String type;
-	
+
 	@Column(nullable = false)
 	private long count;
-	
-	@Id
+
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "account_id")
 	private Account account;
-	
+
 	protected Statistics() {
 	}
 
@@ -36,6 +41,14 @@ public class Statistics {
 		this.type = type;
 		this.count = count;
 		this.account = account;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public LocalDate getDay() {
@@ -77,6 +90,7 @@ public class Statistics {
 		result = prime * result + ((account == null) ? 0 : account.hashCode());
 		result = prime * result + (int) (count ^ (count >>> 32));
 		result = prime * result + ((day == null) ? 0 : day.hashCode());
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -102,6 +116,8 @@ public class Statistics {
 				return false;
 		} else if (!day.equals(other.day))
 			return false;
+		if (id != other.id)
+			return false;
 		if (type == null) {
 			if (other.type != null)
 				return false;
@@ -109,6 +125,5 @@ public class Statistics {
 			return false;
 		return true;
 	}
-
 
 }

@@ -1,15 +1,18 @@
 package com.smec.codingchallengewebapi.service;
 
+import org.springframework.stereotype.Component;
+
 import com.smec.codingchallengewebapi.entities.Account;
 import com.smec.codingchallengewebapi.rest.account.AccountDTO;
 
+@Component
 public class AccountConverter {
 
-	public static AccountDTO toDTO(Account account) {
+	public AccountDTO toDTO(Account account) {
 		return new AccountDTO(account.getName());
 	}
 	
-	public static Account toEntity(AccountDTO accountDTO) {
+	public Account toEntity(AccountDTO accountDTO) {
 		return new Account(accountDTO.getName());
 	}
 	

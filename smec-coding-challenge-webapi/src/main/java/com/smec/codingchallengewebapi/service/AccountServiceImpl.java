@@ -16,24 +16,23 @@ import com.smec.codingchallengewebapi.rest.account.AccountService;
 public class AccountServiceImpl implements AccountService {
 
 	private final AccountRepository accountRepository;
-	private final AccountResolver accountResolver;
+	private final AccountConverter accountConverter;
 
-	protected AccountServiceImpl(AccountRepository accountRepository, AccountResolver accountResolver) {
+	protected AccountServiceImpl(AccountRepository accountRepository, AccountConverter accountConverter) {
 		this.accountRepository = accountRepository;
-		this.accountResolver = accountResolver;
+		this.accountConverter = accountConverter;
 	}
 
 	@Override
 	public List<AccountDTO> findAll() {
-		return accountRepository.findAll().stream().map(account -> new AccountDTO(account.getName()))
-				.collect(Collectors.toList());
+		return accountRepository.findAll().stream().map(account -> accountConverter.toDTO(account)).collect(Collectors.toList());
 	}
 
 	@Override
 	public AccountDTO createAccount(AccountDTO accountDTO) {
 		try {
-			Account createdAccount = accountRepository.save(AccountConverter.toEntity(accountDTO));
-			return AccountConverter.toDTO(createdAccount);
+			Account createdAccount = accountRepository.save(accountConverter.toEntity(accountDTO));
+			return accountConverter.toDTO(createdAccount);
 		} catch (DataIntegrityViolationException e) {
 			throw new AccountAlreadyExistsException(accountDTO.getName());
 		}
@@ -41,9 +40,9 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public AccountDTO updateAccount(String accountName, AccountDTO newAccount) {
-		Account account = accountResolver.findAccountByNameOrThrow(accountName);
+		Account account = accountRepository.findAccountByNameOrThrow(accountName);
 		account.setName(newAccount.getName());
-		return AccountConverter.toDTO(accountRepository.save(account));
+		return accountConverter.toDTO(accountRepository.save(account));
 	}
 
 }

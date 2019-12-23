@@ -7,37 +7,37 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import com.smec.codingchallengewebapi.entities.Account;
+import com.smec.codingchallengewebapi.persistence.AccountRepository;
 import com.smec.codingchallengewebapi.persistence.StatisticsRepository;
 import com.smec.codingchallengewebapi.rest.event.EventDTO;
-import com.smec.codingchallengewebapi.rest.statistics.StatisticsConverter;
 import com.smec.codingchallengewebapi.rest.statistics.StatisticsDTO;
 import com.smec.codingchallengewebapi.rest.statistics.StatisticsService;
 
 @Component
 public class StatisticsServiceImpl implements StatisticsService {
 
-	private final AccountResolver accountResolver;
+	private final AccountRepository accountRepository;
 	private final StatisticsRepository statisticsRepository;
+	private final StatisticsConverter statisticsConverter;
 
-	public StatisticsServiceImpl(AccountResolver accountResolver, StatisticsRepository statisticsRepository) {
-		this.accountResolver = accountResolver;
+	public StatisticsServiceImpl(AccountRepository accountRepository, StatisticsRepository statisticsRepository, StatisticsConverter statisticsConverter) {
+		this.accountRepository = accountRepository;
 		this.statisticsRepository = statisticsRepository;
+		this.statisticsConverter = statisticsConverter;
 	}
 
 	@Override
 	public List<StatisticsDTO> getAllStatisticsByAccountName(String accountName) {
-		Account account = accountResolver.findAccountByNameOrThrow(accountName);
-		return statisticsRepository.findByAccount(account).stream().map(event -> StatisticsConverter.toDTO(event))
+		Account account = accountRepository.findAccountByNameOrThrow(accountName);
+		return statisticsRepository.findByAccount(account).stream().map(event -> statisticsConverter.toDTO(event))
 				.collect(Collectors.toList());
 	}
 
-	public void createStatisticsForEvent(EventDTO eventDTO, String accountName) {
-		Account account = accountResolver.findAccountByNameOrThrow(accountName);
+	public void createStatisticsForEvent(EventDTO eventDTO, Account account) {
 		try {
 			statisticsRepository.createStatisticsForEventImpl(eventDTO, account);
 
 		} catch (DataIntegrityViolationException e) {
-			// this can happen if more than one thread is creating the first statistics entry.
 			statisticsRepository.createStatisticsForEventImpl(eventDTO, account);
 		}
 	}
