@@ -18,8 +18,6 @@ public interface StatisticsRepository extends JpaRepository<Statistics, Long> {
 
 	List<Statistics> findByAccount(Account account);
 
-	Statistics findByAccountAndDayAndType(Account account, LocalDate day, String type);
-
 	@Modifying
 	@Query("update Statistics s set s.count = s.count + 1 where s.day = :day and s.type = :type and s.account = :account")
 	int updateCounter(@Param("account") Account account, @Param("day") LocalDate day, @Param("type") String type);
