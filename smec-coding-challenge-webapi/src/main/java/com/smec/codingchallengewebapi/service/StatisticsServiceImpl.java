@@ -3,6 +3,7 @@ package com.smec.codingchallengewebapi.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
@@ -16,14 +17,14 @@ import com.smec.codingchallengewebapi.rest.statistics.StatisticsService;
 @Component
 public class StatisticsServiceImpl implements StatisticsService {
 
-	private final AccountRepository accountRepository;
-	private final StatisticsRepository statisticsRepository;
-	private final StatisticsConverter statisticsConverter;
+	@Autowired
+	private AccountRepository accountRepository;
+	@Autowired
+	private StatisticsRepository statisticsRepository;
+	@Autowired
+	private StatisticsConverter statisticsConverter;
 
-	public StatisticsServiceImpl(AccountRepository accountRepository, StatisticsRepository statisticsRepository, StatisticsConverter statisticsConverter) {
-		this.accountRepository = accountRepository;
-		this.statisticsRepository = statisticsRepository;
-		this.statisticsConverter = statisticsConverter;
+	public StatisticsServiceImpl() {
 	}
 
 	@Override

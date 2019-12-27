@@ -3,6 +3,7 @@ package com.smec.codingchallengewebapi.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.smec.codingchallengewebapi.entities.Account;
@@ -16,16 +17,16 @@ import com.smec.codingchallengewebapi.rest.statistics.StatisticsService;
 @Component
 public class EventServiceImpl implements EventService {
 
-	private final AccountRepository accountRepository;
-	private final EventRepository eventRepository;
-	private final StatisticsService statisticsService;
-	private final EventConverter eventConverter;
+	@Autowired
+	private AccountRepository accountRepository;
+	@Autowired
+	private EventRepository eventRepository;
+	@Autowired
+	private StatisticsService statisticsService;
+	@Autowired
+	private EventConverter eventConverter;
 	
-	public EventServiceImpl(AccountRepository accountRepository, EventRepository eventRepository, StatisticsService statisticsService, EventConverter eventConverter) {
-		this.accountRepository = accountRepository;
-		this.eventRepository = eventRepository;
-		this.statisticsService = statisticsService;
-		this.eventConverter = eventConverter;
+	public EventServiceImpl() {
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.smec.codingchallengewebapi.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
@@ -15,17 +16,19 @@ import com.smec.codingchallengewebapi.rest.account.AccountService;
 @Component
 public class AccountServiceImpl implements AccountService {
 
-	private final AccountRepository accountRepository;
-	private final AccountConverter accountConverter;
+	@Autowired
+	private AccountRepository accountRepository;
+	
+	@Autowired
+	private AccountConverter accountConverter;
 
-	protected AccountServiceImpl(AccountRepository accountRepository, AccountConverter accountConverter) {
-		this.accountRepository = accountRepository;
-		this.accountConverter = accountConverter;
+	protected AccountServiceImpl() {
 	}
 
 	@Override
 	public List<AccountDTO> findAll() {
-		return accountRepository.findAll().stream().map(account -> accountConverter.toDTO(account)).collect(Collectors.toList());
+		return accountRepository.findAll().stream().map(account -> accountConverter.toDTO(account))
+				.collect(Collectors.toList());
 	}
 
 	@Override
