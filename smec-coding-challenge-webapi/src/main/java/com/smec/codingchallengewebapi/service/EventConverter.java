@@ -10,10 +10,16 @@ import com.smec.codingchallengewebapi.rest.event.EventDTO;
 public class EventConverter {
 
 	public EventDTO toDTO(Event event) {
+		if(event == null) {
+			return null;
+		}
 		return new EventDTO(event.getHappenedAt(), event.getType());
 	}
 	
 	public Event toEntity(EventDTO eventDTO, Account account) {
+		if(eventDTO == null) {
+			return null;
+		}
 		return new Event(eventDTO.getHappenedAt(), eventDTO.getType(), account);
 	}
 	

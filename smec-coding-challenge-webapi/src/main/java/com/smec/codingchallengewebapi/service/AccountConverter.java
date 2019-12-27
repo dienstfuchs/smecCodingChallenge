@@ -9,11 +9,17 @@ import com.smec.codingchallengewebapi.rest.account.AccountDTO;
 public class AccountConverter {
 
 	public AccountDTO toDTO(Account account) {
+		if (account == null) {
+			return null;
+		}
 		return new AccountDTO(account.getName());
 	}
-	
+
 	public Account toEntity(AccountDTO accountDTO) {
+		if (accountDTO == null) {
+			return null;
+		}
 		return new Account(accountDTO.getName());
 	}
-	
+
 }

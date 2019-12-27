@@ -9,6 +9,9 @@ import com.smec.codingchallengewebapi.rest.statistics.StatisticsDTO;
 public class StatisticsConverter {
 
 	public StatisticsDTO toDTO(Statistics statistics) {
+		if(statistics == null) {
+			return null;
+		}
 		return new StatisticsDTO(statistics.getDay(), statistics.getType(), statistics.getCount());
 	}
 }
