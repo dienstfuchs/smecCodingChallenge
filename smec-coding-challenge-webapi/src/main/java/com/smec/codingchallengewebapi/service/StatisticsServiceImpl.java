@@ -35,10 +35,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 	public void createStatisticsForEvent(EventDTO eventDTO, Account account) {
 		try {
-			statisticsRepository.createStatisticsForEventImpl(eventDTO, account);
+			statisticsRepository.createStatisticsForEvent(eventDTO, account);
 
 		} catch (DataIntegrityViolationException e) {
-			statisticsRepository.createStatisticsForEventImpl(eventDTO, account);
+			statisticsRepository.createStatisticsForEvent(eventDTO, account);
 		}
 	}
 
