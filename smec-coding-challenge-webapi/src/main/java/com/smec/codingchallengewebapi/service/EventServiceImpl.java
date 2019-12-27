@@ -31,7 +31,7 @@ public class EventServiceImpl implements EventService {
 	@Override
 	public List<EventDTO> getAllEventsByAccountName(String accountName) {
 		Account account = accountRepository.findAccountByNameOrThrow(accountName);
-		return eventRepository.findByAccount(account).stream().map(event -> eventConverter.toDTO(event))
+		return eventRepository.findByAccountName(account.getName()).stream().map(event -> eventConverter.toDTO(event))
 				.collect(Collectors.toList());
 	}
 
