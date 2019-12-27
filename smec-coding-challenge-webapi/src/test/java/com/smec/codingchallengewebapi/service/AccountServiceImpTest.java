@@ -107,13 +107,29 @@ public class AccountServiceImpTest {
 		AccountDTO accountDTO = new AccountDTO("Account B");
 
 		Mockito.when(accountRepository.findAccountByNameOrThrow("Account A")).thenReturn(accountA);
+		Mockito.when(accountRepository.findByName("Account B")).thenReturn(null);
 		Mockito.when(accountRepository.save(accountA)).thenReturn(accountB);
 		// when
 		AccountDTO updatedAccount = accountService.updateAccount("Account A", accountDTO);
 		// then
 		Mockito.verify(accountRepository).findAccountByNameOrThrow("Account A");
+		Mockito.verify(accountRepository).findByName("Account B");
 		Mockito.verify(accountRepository).save(accountB);
 		assertThat(updatedAccount.getName(), is("Account B"));
+	}
+	
+	@Test(expected = AccountAlreadyExistsException.class)
+	public void updateAccountAlreadyExists() {
+		// given
+		Account accountA = new Account("Account A");
+		Account accountB = new Account("Account B");
+		AccountDTO accountDTO = new AccountDTO("Account B");
+
+		Mockito.when(accountRepository.findAccountByNameOrThrow("Account A")).thenReturn(accountA);
+		Mockito.when(accountRepository.findByName("Account B")).thenReturn(accountB);
+		Mockito.when(accountRepository.save(accountA)).thenReturn(accountB);
+		// when
+		accountService.updateAccount("Account A", accountDTO);
 	}
 
 }

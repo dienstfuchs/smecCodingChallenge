@@ -18,7 +18,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Autowired
 	private AccountRepository accountRepository;
-	
+
 	@Autowired
 	private AccountConverter accountConverter;
 
@@ -27,7 +27,9 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public List<AccountDTO> findAll() {
-		return accountRepository.findAll().stream().map(account -> accountConverter.toDTO(account))
+		return accountRepository.findAll()
+				.stream()
+				.map(account -> accountConverter.toDTO(account))
 				.collect(Collectors.toList());
 	}
 
@@ -44,6 +46,9 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public AccountDTO updateAccount(String accountName, AccountDTO newAccount) {
 		Account account = accountRepository.findAccountByNameOrThrow(accountName);
+		if (accountRepository.findByName(newAccount.getName()) != null) {
+			throw new AccountAlreadyExistsException(newAccount.getName());
+		}
 		account.setName(newAccount.getName());
 		return accountConverter.toDTO(accountRepository.save(account));
 	}
