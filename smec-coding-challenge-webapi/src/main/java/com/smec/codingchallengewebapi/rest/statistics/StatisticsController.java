@@ -16,7 +16,7 @@ public class StatisticsController {
 	}
 
 	@GetMapping("/accounts/{accountName}/statistics")
-	public List<StatisticsDTO> getAllEvents(@PathVariable String accountName) {
+	public List<StatisticsDTO> getAllStatistics(@PathVariable String accountName) {
 		return statisticsService.getAllStatisticsByAccountName(accountName);
 	}
 

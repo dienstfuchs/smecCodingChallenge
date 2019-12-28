@@ -21,6 +21,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.smec.codingchallengewebapi.rest.account.AccountAlreadyExistsException;
+import com.smec.codingchallengewebapi.rest.account.AccountController;
+import com.smec.codingchallengewebapi.rest.account.AccountDTO;
+import com.smec.codingchallengewebapi.rest.account.AccountNotFoundException;
+import com.smec.codingchallengewebapi.rest.account.AccountService;
+
 @RunWith(SpringRunner.class)
 @WebMvcTest(AccountController.class)
 public class AccountControllerTest {
@@ -54,7 +60,7 @@ public class AccountControllerTest {
 		AccountDTO account = new AccountDTO("Account A");
 		when(accountService.createAccount(account)).thenReturn(account);
 		mvc.perform(post("/accounts").content("{\"name\":\"Account A\"}").contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
+				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.name", is("Account A")));
 	}
 	
