@@ -32,8 +32,11 @@ public class StatisticsControllerTest {
 
 	@Test
 	public void getAllStatisticsWhenAccountNotExists() throws Exception {
-		when(statisticsService.getAllStatisticsByAccountName("Account A")).thenThrow(AccountNotFoundException.class);
-		mvc.perform(get("/accounts/Account A/statistics")).andExpect(status().isNotFound());
+		when(statisticsService.getAllStatisticsByAccountName("Account A", LocalDate.of(2020, 1, 1),
+				LocalDate.of(2020, 1, 1))).thenThrow(AccountNotFoundException.class);
+		mvc.perform(
+				get("/accounts/Account A/statistics").param("startDate", "2020-01-01").param("endDate", "2020-01-01"))
+				.andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -42,8 +45,11 @@ public class StatisticsControllerTest {
 		StatisticsDTO statistics2 = new StatisticsDTO(LocalDate.of(2020, 1, 1), "Event 2", 6);
 		List<StatisticsDTO> statisticsDTOs = List.of(statistics1, statistics2);
 
-		when(statisticsService.getAllStatisticsByAccountName("Account A")).thenReturn(statisticsDTOs);
-		mvc.perform(get("/accounts/Account A/statistics"))
+		when(statisticsService.getAllStatisticsByAccountName("Account A", LocalDate.of(2020, 1, 1),
+				LocalDate.of(2020, 1, 1))).thenReturn(statisticsDTOs);
+		
+		mvc.perform(
+				get("/accounts/Account A/statistics").param("startDate", "2020-01-01").param("endDate", "2020-01-01"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(2)))
 				.andExpect(jsonPath("$[0].type", is("Event 1")))

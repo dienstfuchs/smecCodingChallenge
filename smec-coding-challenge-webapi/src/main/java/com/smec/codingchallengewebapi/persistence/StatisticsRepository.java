@@ -15,7 +15,8 @@ import com.smec.codingchallengewebapi.rest.event.EventDTO;
 
 public interface StatisticsRepository extends JpaRepository<Statistics, Long> {
 
-	List<Statistics> findByAccountOrderByDayAscTypeAsc(Account account);
+	@Query("select s from Statistics s where s.account =:account and s.day >= :startDate and s.day <=:endDate order by s.day asc, s.type asc")
+	List<Statistics> findByAccount(Account account, LocalDate startDate, LocalDate endDate);
 
 	@Modifying(clearAutomatically = true)
 	@Query("update Statistics s set s.count = s.count + 1 where s.day = :day and s.type = :type and s.account = :account")
@@ -24,7 +25,7 @@ public interface StatisticsRepository extends JpaRepository<Statistics, Long> {
 	@Transactional
 	default void createStatisticsForEvent(EventDTO eventDTO, Account account) {
 		int rowCnt = updateCounter(account, eventDTO.getHappenedAt().toLocalDate(), eventDTO.getType());
-		//Nothing has been updated -> dataset does not exists yet, create it
+		// Nothing has been updated -> dataset does not exists yet, create it
 		if (rowCnt == 0) {
 			save(new Statistics(eventDTO.getHappenedAt().toLocalDate(), eventDTO.getType(), 1, account));
 		}

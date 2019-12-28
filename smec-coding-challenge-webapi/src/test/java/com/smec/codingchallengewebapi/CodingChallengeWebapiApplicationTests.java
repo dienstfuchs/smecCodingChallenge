@@ -128,8 +128,12 @@ class CodingChallengeWebapiApplicationTests {
 
 		StatisticsDTO statisticsE1 = new StatisticsDTO(LocalDate.of(2020, 1, 2), "Event 1E", 2);
 
-		getAndAssertStatistics(accountD, List.of(statisticsD1, statisticsD2, statisticsD3, statisticsD4));
-		getAndAssertStatistics(accountE, List.of(statisticsE1));
+		getAndAssertStatistics(accountD, List.of(statisticsD1, statisticsD2, statisticsD3, statisticsD4), "2019-01-01",
+				"2020-01-02");
+		getAndAssertStatistics(accountD, List.of(statisticsD1, statisticsD2), "2020-01-01", "2020-01-01");
+		getAndAssertStatistics(accountD, List.of(statisticsD3, statisticsD4), "2020-01-02", "2020-01-03");
+
+		getAndAssertStatistics(accountE, List.of(statisticsE1), "2020-01-01", "2020-01-02");
 	}
 
 	@Test
@@ -181,8 +185,8 @@ class CodingChallengeWebapiApplicationTests {
 		StatisticsDTO statisticsG2 = new StatisticsDTO(LocalDate.of(2019, 12, 1), "Event_2", 1000);
 		StatisticsDTO statisticsG3 = new StatisticsDTO(LocalDate.of(2019, 12, 2), "Event_2", 1000);
 
-		getAndAssertStatistics(accountF, List.of(statisticsF1, statisticsF2, statisticsF3));
-		getAndAssertStatistics(accountF, List.of(statisticsG1, statisticsG2, statisticsG3));
+		getAndAssertStatistics(accountF, List.of(statisticsF1, statisticsF2, statisticsF3), "2019-01-01", "2020-01-01");
+		getAndAssertStatistics(accountF, List.of(statisticsG1, statisticsG2, statisticsG3), "2019-01-01", "2020-01-01");
 
 	}
 
@@ -196,8 +200,11 @@ class CodingChallengeWebapiApplicationTests {
 		}
 	}
 
-	private void getAndAssertStatistics(AccountDTO account, List<StatisticsDTO> statistics) throws Exception {
-		mvc.perform(get("/accounts/" + account.getName() + "/statistics").contentType(MediaType.APPLICATION_JSON))
+	private void getAndAssertStatistics(AccountDTO account, List<StatisticsDTO> statistics, String startDate,
+			String endDate) throws Exception {
+		mvc.perform(get("/accounts/" + account.getName() + "/statistics").contentType(MediaType.APPLICATION_JSON)
+				.param("startDate", startDate)
+				.param("endDate", endDate))
 				.andExpect(status().isOk())
 				.andExpect(responseBody().containsObjectAsJson(statistics, new TypeReference<List<StatisticsDTO>>() {
 				}));

@@ -1,5 +1,6 @@
 package com.smec.codingchallengewebapi.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,9 +29,12 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	@Override
-	public List<StatisticsDTO> getAllStatisticsByAccountName(String accountName) {
+	public List<StatisticsDTO> getAllStatisticsByAccountName(String accountName, LocalDate startDate,
+			LocalDate endDate) {
 		Account account = accountRepository.findAccountByNameOrThrow(accountName);
-		return statisticsRepository.findByAccountOrderByDayAscTypeAsc(account).stream().map(event -> statisticsConverter.toDTO(event))
+		return statisticsRepository.findByAccount(account, startDate, endDate)
+				.stream()
+				.map(event -> statisticsConverter.toDTO(event))
 				.collect(Collectors.toList());
 	}
 

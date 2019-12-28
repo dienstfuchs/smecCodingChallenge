@@ -38,7 +38,8 @@ public class StatisticsRepositoryTest {
 		statisticsRepository.save(new Statistics(LocalDate.of(2020, 01, 01), "Event 1B", 1, accountB));
 
 		// when
-		List<Statistics> statistics = statisticsRepository.findByAccountOrderByDayAscTypeAsc(accountA);
+		List<Statistics> statistics = statisticsRepository.findByAccount(accountA, LocalDate.of(2019, 1, 1),
+				LocalDate.of(2020, 1, 1));
 
 		// then
 		assertThat(statistics.size(), is(1));
@@ -75,7 +76,8 @@ public class StatisticsRepositoryTest {
 
 		// then
 		assertThat(updatedCount, is(1));
-		List<Statistics> updatedStatistics = statisticsRepository.findByAccountOrderByDayAscTypeAsc(account);
+		List<Statistics> updatedStatistics = statisticsRepository.findByAccount(account, LocalDate.of(2019, 1, 1),
+				LocalDate.of(2020, 1, 1));
 		assertThat(updatedStatistics.size(), is(1));
 		assertThat(updatedStatistics.get(0).getCount(), is(2L));
 	}
@@ -88,15 +90,50 @@ public class StatisticsRepositoryTest {
 		entityManager.flush();
 
 		// when
-		statisticsRepository.createStatisticsForEvent(new EventDTO(LocalDateTime.of(2020, 01, 01, 12, 00), "Event 1"),
+		statisticsRepository.createStatisticsForEvent(new EventDTO(LocalDateTime.of(2018, 01, 02, 12, 01), "Event 1"),
 				account);
-		statisticsRepository.createStatisticsForEvent(new EventDTO(LocalDateTime.of(2020, 01, 01, 12, 01), "Event 1"),
+
+		statisticsRepository.createStatisticsForEvent(new EventDTO(LocalDateTime.of(2019, 01, 01, 12, 00), "Event 1"),
+				account);
+		statisticsRepository.createStatisticsForEvent(new EventDTO(LocalDateTime.of(2019, 01, 01, 12, 01), "Event 1"),
+				account);
+
+		statisticsRepository.createStatisticsForEvent(new EventDTO(LocalDateTime.of(2019, 01, 02, 12, 01), "Event 1"),
+				account);
+
+		statisticsRepository.createStatisticsForEvent(new EventDTO(LocalDateTime.of(2021, 01, 02, 12, 01), "Event 1"),
 				account);
 
 		// then
-		List<Statistics> updatedStatistics = statisticsRepository.findByAccountOrderByDayAscTypeAsc(account);
-		assertThat(updatedStatistics.size(), is(1));
+		List<Statistics> updatedStatistics = statisticsRepository.findByAccount(account, LocalDate.of(2019, 1, 1),
+				LocalDate.of(2020, 1, 1));
+		assertThat(updatedStatistics.size(), is(2));
 		assertThat(updatedStatistics.get(0).getCount(), is(2L));
+
+	}
+
+	@Test
+	public void dateFiltering() {
+		// given
+		Account accountA = new Account("Account A");
+		entityManager.persist(accountA);
+		statisticsRepository.save(new Statistics(LocalDate.of(2018, 01, 01), "Event 1A", 1, accountA));
+		statisticsRepository.save(new Statistics(LocalDate.of(2019, 01, 01), "Event 1A", 1, accountA));
+		statisticsRepository.save(new Statistics(LocalDate.of(2020, 01, 01), "Event 1A", 1, accountA));
+		statisticsRepository.save(new Statistics(LocalDate.of(2021, 01, 01), "Event 1A", 1, accountA));
+		statisticsRepository.save(new Statistics(LocalDate.of(2022, 01, 01), "Event 1A", 1, accountA));
+
+		assertThat(
+				statisticsRepository.findByAccount(accountA, LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 1)).size(),
+				is(2));
+
+		assertThat(
+				statisticsRepository.findByAccount(accountA, LocalDate.of(2015, 1, 1), LocalDate.of(2025, 1, 1)).size(),
+				is(5));
+
+		assertThat(
+				statisticsRepository.findByAccount(accountA, LocalDate.of(2025, 1, 1), LocalDate.of(2019, 1, 1)).size(),
+				is(0));
 
 	}
 

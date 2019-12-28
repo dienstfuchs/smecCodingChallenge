@@ -53,14 +53,13 @@ public class StatisticsServiceImpTest {
 	@MockBean
 	private StatisticsRepository statisticsRepository;
 
-
 	@Test(expected = AccountNotFoundException.class)
 	public void getAllStatisticsByAccountNameNotFound() {
 		// given
 
 		Mockito.when(accountRepository.findAccountByNameOrThrow("Account A")).thenThrow(AccountNotFoundException.class);
 		// when
-		statisticsService.getAllStatisticsByAccountName("Account A");
+		statisticsService.getAllStatisticsByAccountName("Account A", LocalDate.of(2019, 1, 1), LocalDate.of(2021, 1, 1));
 		// then
 		Mockito.verify(accountRepository).findAccountByNameOrThrow("Account A");
 	}
@@ -71,30 +70,35 @@ public class StatisticsServiceImpTest {
 		Account accountA = new Account("Account A");
 		Statistics statistics = new Statistics(LocalDate.now(), "Event 1", 1, accountA);
 		Mockito.when(accountRepository.findAccountByNameOrThrow("Account A")).thenReturn(accountA);
-		Mockito.when(statisticsRepository.findByAccountOrderByDayAscTypeAsc(accountA)).thenReturn(List.of(statistics));
-		
+		Mockito.when(statisticsRepository.findByAccount(accountA, LocalDate.of(2019, 1, 1), LocalDate.of(2021, 1, 1)))
+				.thenReturn(List.of(statistics));
+
 		// when
-		List<StatisticsDTO> statisticsDTOs = statisticsService.getAllStatisticsByAccountName("Account A");
-		
+		List<StatisticsDTO> statisticsDTOs = statisticsService.getAllStatisticsByAccountName("Account A", LocalDate.of(2019, 1, 1), LocalDate.of(2021, 1, 1));
+
 		// then
 		Mockito.verify(accountRepository).findAccountByNameOrThrow("Account A");
-		Mockito.verify(statisticsRepository).findByAccountOrderByDayAscTypeAsc(accountA);
+		Mockito.verify(statisticsRepository)
+				.findByAccount(accountA, LocalDate.of(2019, 1, 1), LocalDate.of(2021, 1, 1));
 		assertThat(statisticsDTOs.size(), is(1));
 		assertThat(statisticsDTOs.get(0).getType(), is(equalTo("Event 1")));
 	}
-	
+
 	@Test
 	public void createStatisticsForEvent() {
 		// given
 		Account accountA = new Account("Account A");
 		EventDTO eventDTO = new EventDTO(LocalDateTime.now(), "Event 1");
-		
-		Mockito.doThrow(new DataIntegrityViolationException("")).doNothing().when(statisticsRepository).createStatisticsForEvent(eventDTO, accountA);
+
+		Mockito.doThrow(new DataIntegrityViolationException(""))
+				.doNothing()
+				.when(statisticsRepository)
+				.createStatisticsForEvent(eventDTO, accountA);
 		Mockito.doNothing().when(statisticsRepository).createStatisticsForEvent(eventDTO, accountA);
-		
+
 		// when
 		statisticsService.createStatisticsForEvent(eventDTO, accountA);
-		
+
 		// then
 		Mockito.verify(statisticsRepository).createStatisticsForEvent(eventDTO, accountA);
 		Mockito.verify(statisticsRepository).createStatisticsForEvent(eventDTO, accountA);
