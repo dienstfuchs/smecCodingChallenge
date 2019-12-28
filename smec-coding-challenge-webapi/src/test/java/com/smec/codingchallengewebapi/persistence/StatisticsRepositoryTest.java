@@ -38,7 +38,7 @@ public class StatisticsRepositoryTest {
 		statisticsRepository.save(new Statistics(LocalDate.of(2020, 01, 01), "Event 1B", 1, accountB));
 
 		// when
-		List<Statistics> statistics = statisticsRepository.findByAccount(accountA);
+		List<Statistics> statistics = statisticsRepository.findByAccountOrderByDayAscTypeAsc(accountA);
 
 		// then
 		assertThat(statistics.size(), is(1));
@@ -75,7 +75,7 @@ public class StatisticsRepositoryTest {
 
 		// then
 		assertThat(updatedCount, is(1));
-		List<Statistics> updatedStatistics = statisticsRepository.findByAccount(account);
+		List<Statistics> updatedStatistics = statisticsRepository.findByAccountOrderByDayAscTypeAsc(account);
 		assertThat(updatedStatistics.size(), is(1));
 		assertThat(updatedStatistics.get(0).getCount(), is(2L));
 	}
@@ -94,7 +94,7 @@ public class StatisticsRepositoryTest {
 				account);
 
 		// then
-		List<Statistics> updatedStatistics = statisticsRepository.findByAccount(account);
+		List<Statistics> updatedStatistics = statisticsRepository.findByAccountOrderByDayAscTypeAsc(account);
 		assertThat(updatedStatistics.size(), is(1));
 		assertThat(updatedStatistics.get(0).getCount(), is(2L));
 

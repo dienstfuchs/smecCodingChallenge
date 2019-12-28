@@ -30,7 +30,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 	@Override
 	public List<StatisticsDTO> getAllStatisticsByAccountName(String accountName) {
 		Account account = accountRepository.findAccountByNameOrThrow(accountName);
-		return statisticsRepository.findByAccount(account).stream().map(event -> statisticsConverter.toDTO(event))
+		return statisticsRepository.findByAccountOrderByDayAscTypeAsc(account).stream().map(event -> statisticsConverter.toDTO(event))
 				.collect(Collectors.toList());
 	}
 

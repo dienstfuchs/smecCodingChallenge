@@ -10,7 +10,7 @@ public class StatisticsDTO {
 
 	protected StatisticsDTO() {
 	}
-	
+
 	public StatisticsDTO(LocalDate day, String type, long count) {
 		this.day = day;
 		this.type = type;
@@ -73,5 +73,10 @@ public class StatisticsDTO {
 		} else if (!type.equals(other.type))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return getDay() + "_" + getType() + "_" + getCount();
 	}
 }

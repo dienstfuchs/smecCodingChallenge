@@ -71,14 +71,14 @@ public class StatisticsServiceImpTest {
 		Account accountA = new Account("Account A");
 		Statistics statistics = new Statistics(LocalDate.now(), "Event 1", 1, accountA);
 		Mockito.when(accountRepository.findAccountByNameOrThrow("Account A")).thenReturn(accountA);
-		Mockito.when(statisticsRepository.findByAccount(accountA)).thenReturn(List.of(statistics));
+		Mockito.when(statisticsRepository.findByAccountOrderByDayAscTypeAsc(accountA)).thenReturn(List.of(statistics));
 		
 		// when
 		List<StatisticsDTO> statisticsDTOs = statisticsService.getAllStatisticsByAccountName("Account A");
 		
 		// then
 		Mockito.verify(accountRepository).findAccountByNameOrThrow("Account A");
-		Mockito.verify(statisticsRepository).findByAccount(accountA);
+		Mockito.verify(statisticsRepository).findByAccountOrderByDayAscTypeAsc(accountA);
 		assertThat(statisticsDTOs.size(), is(1));
 		assertThat(statisticsDTOs.get(0).getType(), is(equalTo("Event 1")));
 	}

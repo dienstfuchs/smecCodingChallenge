@@ -1,23 +1,9 @@
 package com.smec.codingchallengewebapi;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-import com.smec.codingchallengewebapi.rest.account.AccountDTO;
-import com.smec.codingchallengewebapi.rest.account.AccountService;
-import com.smec.codingchallengewebapi.rest.event.EventDTO;
-import com.smec.codingchallengewebapi.rest.event.EventService;
 
 @SpringBootApplication
 public class CodingChallengeWebapiApplication {
