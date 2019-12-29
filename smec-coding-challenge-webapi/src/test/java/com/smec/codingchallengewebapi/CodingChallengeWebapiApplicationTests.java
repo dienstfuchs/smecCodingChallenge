@@ -118,8 +118,12 @@ class CodingChallengeWebapiApplicationTests {
 		createAndAssertEvent(event1E, accountE.getName());
 		createAndAssertEvent(event2E, accountE.getName());
 
-		getAndAssertEvents(accountD, List.of(event1D, event2D, event3D, event4D, event5D, event6D));
-		getAndAssertEvents(accountE, List.of(event1E, event2E));
+		getAndAssertEvents(accountD, List.of(event1D, event2D, event3D, event4D, event5D, event6D), "2019-01-01",
+				"2020-01-02");
+		getAndAssertEvents(accountD, List.of(event1D, event2D), "2019-01-01", "2020-01-01");
+		getAndAssertEvents(accountD, List.of(), "2017-01-01", "2018-01-01");
+
+		getAndAssertEvents(accountE, List.of(event1E, event2E), "2019-01-01", "2020-01-02");
 
 		StatisticsDTO statisticsD1 = new StatisticsDTO(LocalDate.of(2020, 1, 1), "Event 1D", 1);
 		StatisticsDTO statisticsD2 = new StatisticsDTO(LocalDate.of(2020, 1, 1), "Event 2D", 1);
@@ -210,8 +214,11 @@ class CodingChallengeWebapiApplicationTests {
 				}));
 	}
 
-	private void getAndAssertEvents(AccountDTO account, List<EventDTO> events) throws Exception {
-		mvc.perform(get("/accounts/" + account.getName() + "/events").contentType(MediaType.APPLICATION_JSON))
+	private void getAndAssertEvents(AccountDTO account, List<EventDTO> events, String startDate, String endDate)
+			throws Exception {
+		mvc.perform(get("/accounts/" + account.getName() + "/events").param("startDate", startDate)
+				.param("endDate", endDate)
+				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(responseBody().containsObjectAsJson(events, new TypeReference<List<EventDTO>>() {
 				}));

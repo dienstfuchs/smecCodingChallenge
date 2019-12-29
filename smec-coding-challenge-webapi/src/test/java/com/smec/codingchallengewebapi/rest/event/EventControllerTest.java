@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,8 +35,10 @@ public class EventControllerTest {
 
 	@Test
 	public void getAllEventsWhenAccountNotExists() throws Exception {
-		when(eventService.getAllEventsByAccountName("Account A")).thenThrow(AccountNotFoundException.class);
-		mvc.perform(get("/accounts/Account A/events")).andExpect(status().isNotFound());
+		when(eventService.getAllEventsByAccountName("Account A", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 1)))
+				.thenThrow(AccountNotFoundException.class);
+		mvc.perform(get("/accounts/Account A/events").param("startDate", "2020-01-01").param("endDate", "2020-01-01"))
+				.andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -44,8 +47,9 @@ public class EventControllerTest {
 		EventDTO event2 = new EventDTO(LocalDateTime.of(2020, 1, 1, 13, 00), "Event 2");
 		List<EventDTO> events = List.of(event1, event2);
 
-		when(eventService.getAllEventsByAccountName("Account A")).thenReturn(events);
-		mvc.perform(get("/accounts/Account A/events"))
+		when(eventService.getAllEventsByAccountName("Account A", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 1)))
+				.thenReturn(events);
+		mvc.perform(get("/accounts/Account A/events").param("startDate", "2020-01-01").param("endDate", "2020-01-01"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(2)))
 				.andExpect(jsonPath("$[0].type", is("Event 1")))

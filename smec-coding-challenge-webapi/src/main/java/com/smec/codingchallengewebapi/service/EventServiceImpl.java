@@ -1,5 +1,6 @@
 package com.smec.codingchallengewebapi.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,14 +26,16 @@ public class EventServiceImpl implements EventService {
 	private StatisticsService statisticsService;
 	@Autowired
 	private EventConverter eventConverter;
-	
+
 	public EventServiceImpl() {
 	}
 
 	@Override
-	public List<EventDTO> getAllEventsByAccountName(String accountName) {
+	public List<EventDTO> getAllEventsByAccountName(String accountName, LocalDate startDate, LocalDate endDate) {
 		Account account = accountRepository.findAccountByNameOrThrow(accountName);
-		return eventRepository.findByAccountName(account.getName()).stream().map(event -> eventConverter.toDTO(event))
+		return eventRepository.findByAccount(account, startDate, endDate)
+				.stream()
+				.map(event -> eventConverter.toDTO(event))
 				.collect(Collectors.toList());
 	}
 
@@ -44,5 +47,5 @@ public class EventServiceImpl implements EventService {
 		statisticsService.createStatisticsForEvent(createdEventDTO, account);
 		return createdEventDTO;
 	}
-	
+
 }

@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class EventServiceImplTest {
 
 		Mockito.when(accountRepository.findAccountByNameOrThrow("Account A")).thenThrow(AccountNotFoundException.class);
 		// when
-		eventService.getAllEventsByAccountName("Account A");
+		eventService.getAllEventsByAccountName("Account A", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 1));
 		// then
 		Mockito.verify(accountRepository).findAccountByNameOrThrow("Account A");
 	}
@@ -69,18 +70,21 @@ public class EventServiceImplTest {
 	public void getAllEventsByAccountName() {
 		// given
 		Account accountA = new Account("Account A");
-		Event event1 = new Event(LocalDateTime.now(), "Event 1", accountA);
-		Event event2 = new Event(LocalDateTime.now(), "Event 2", accountA);
+		Event event1 = new Event(LocalDateTime.of(2020, 1, 1, 12, 0), "Event 1", accountA);
+		Event event2 = new Event(LocalDateTime.of(2020, 1, 1, 12, 0), "Event 2", accountA);
 
 		Mockito.when(accountRepository.findAccountByNameOrThrow("Account A")).thenReturn(accountA);
-		Mockito.when(eventRepository.findByAccountName(accountA.getName())).thenReturn(List.of(event1, event2));
+		Mockito.when(eventRepository.findByAccount(accountA, LocalDate.of(2020, 1, 1),
+				LocalDate.of(2020, 1, 1))).thenReturn(List.of(event1, event2));
 
 		// when
-		List<EventDTO> eventDTOs = eventService.getAllEventsByAccountName("Account A");
+		List<EventDTO> eventDTOs = eventService.getAllEventsByAccountName("Account A", LocalDate.of(2020, 1, 1),
+				LocalDate.of(2020, 1, 1));
 
 		// then
 		Mockito.verify(accountRepository).findAccountByNameOrThrow("Account A");
-		Mockito.verify(eventRepository).findByAccountName("Account A");
+		Mockito.verify(eventRepository)
+				.findByAccount(accountA, LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 1));
 		assertThat(eventDTOs.size(), is(2));
 		assertThat(eventDTOs.get(0).getType(), is(equalTo("Event 1")));
 		assertThat(eventDTOs.get(1).getType(), is(equalTo("Event 2")));
@@ -101,15 +105,15 @@ public class EventServiceImplTest {
 	public void createEvent() {
 		// given
 		Account account = new Account("Account A");
-		EventDTO eventDTO = new EventDTO (LocalDateTime.of(2020, 1, 1, 12, 00), "Event 1");
+		EventDTO eventDTO = new EventDTO(LocalDateTime.of(2020, 1, 1, 12, 00), "Event 1");
 		Event event = new Event(LocalDateTime.of(2020, 1, 1, 12, 00), "Event 1", account);
 		Mockito.when(accountRepository.findAccountByNameOrThrow("Account A")).thenReturn(account);
 		Mockito.when(eventRepository.save(event)).thenReturn(event);
 		Mockito.doNothing().when(statisticsService).createStatisticsForEvent(eventDTO, account);
-		
+
 		// when
 		EventDTO createEventDTO = eventService.createEvent(eventDTO, "Account A");
-		
+
 		// then
 		Mockito.verify(accountRepository).findAccountByNameOrThrow("Account A");
 		Mockito.verify(eventRepository).save(event);

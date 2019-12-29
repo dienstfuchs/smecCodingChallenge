@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,39 +29,31 @@ public class EventRepositoryTest {
 	private EventRepository eventRepository;
 
 	@Test
-	public void findByAccountNameAccountNotExists() {
-		// given
-		// when
-		List<Event> events = eventRepository.findByAccountName("Account A");
-		// then
-		assertThat(events.size(), is(0));
-	}
-
-	@Test
 	public void findByAccountName() {
 		// given
 		Account accountA = new Account("Account A");
 		Account accountB = new Account("Account B");
-		
+
 		entityManager.persist(accountA);
 		entityManager.persist(accountB);
-		
-		Event eventA1 = new Event(LocalDateTime.now(), "Event A1", accountA);
-		Event eventA2 = new Event(LocalDateTime.now(), "Event A2", accountA);
-		
-		Event eventB1 = new Event(LocalDateTime.now(), "Event B1", accountB);
-		Event eventB2 = new Event(LocalDateTime.now(), "Event B2", accountB);
-		
+
+		Event eventA1 = new Event(LocalDateTime.of(2020, 1, 1, 12, 0), "Event A1", accountA);
+		Event eventA2 = new Event(LocalDateTime.of(2020, 1, 1, 12, 0), "Event A2", accountA);
+
+		Event eventB1 = new Event(LocalDateTime.of(2020, 1, 1, 12, 0), "Event B1", accountB);
+		Event eventB2 = new Event(LocalDateTime.of(2020, 1, 1, 12, 0), "Event B2", accountB);
+
 		entityManager.persist(eventA1);
 		entityManager.persist(eventA2);
-		
+
 		entityManager.persist(eventB1);
 		entityManager.persist(eventB2);
-		
+
 		entityManager.flush();
 
 		// when
-		List<Event> events = eventRepository.findByAccountName(accountA.getName());
+		List<Event> events = eventRepository.findByAccount(accountA, LocalDate.of(2020, 1, 1),
+				LocalDate.of(2020, 1, 1));
 
 		// then
 		assertThat(events.size(), is(2));
@@ -68,4 +61,33 @@ public class EventRepositoryTest {
 		assertThat(events.get(1).getType(), is(equalTo(eventA2.getType())));
 	}
 
+	@Test
+	public void dateFiltering() {
+		// given
+		Account accountA = new Account("Account A");
+
+		entityManager.persist(accountA);
+
+		Event event1 = new Event(LocalDateTime.of(2020, 1, 1, 12, 0), "Event A1", accountA);
+		Event event2 = new Event(LocalDateTime.of(2020, 1, 2, 12, 0), "Event A2", accountA);
+		Event event3 = new Event(LocalDateTime.of(2020, 1, 3, 12, 0), "Event B1", accountA);
+		Event event4 = new Event(LocalDateTime.of(2020, 1, 4, 12, 0), "Event B2", accountA);
+		Event event5 = new Event(LocalDateTime.of(2020, 1, 5, 12, 0), "Event B2", accountA);
+
+		entityManager.persist(event1);
+		entityManager.persist(event2);
+		entityManager.persist(event3);
+		entityManager.persist(event4);
+		entityManager.persist(event5);
+
+		assertThat(eventRepository.findByAccount(accountA, LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 5)).size(),
+				is(5));
+
+		assertThat(eventRepository.findByAccount(accountA, LocalDate.of(2020, 1, 5), LocalDate.of(2020, 1, 5)).size(),
+				is(1));
+
+		assertThat(eventRepository.findByAccount(accountA, LocalDate.of(2029, 1, 1), LocalDate.of(2020, 1, 3)).size(),
+				is(0));
+
+	}
 }
