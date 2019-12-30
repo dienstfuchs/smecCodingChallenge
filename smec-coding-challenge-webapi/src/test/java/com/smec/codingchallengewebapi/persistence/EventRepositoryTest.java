@@ -93,12 +93,20 @@ public class EventRepositoryTest {
 
 	}
 
+	
 	@Test
-	public void deleteEvents() {
-		deleteAndAssertEvents(LocalDateTime.of(2020, 1, 6, 11, 0), 0);
-		deleteAndAssertEvents(LocalDateTime.of(2020, 1, 5, 11, 0), 4);
-		deleteAndAssertEvents(LocalDateTime.of(2020, 1, 4, 11, 0), 3);
+	public void deleteEventsNo() {
 		deleteAndAssertEvents(LocalDateTime.of(2020, 1, 1, 11, 0), 5);
+	}
+	
+	@Test
+	public void deleteEventAllo() {
+		deleteAndAssertEvents(LocalDateTime.of(2020, 1, 5, 13, 0), 0);
+	}
+	
+	@Test
+	public void deleteEventsTwo() {
+		deleteAndAssertEvents(LocalDateTime.of(2020, 1, 3, 11, 0), 3);
 	}
 
 	private void deleteAndAssertEvents(LocalDateTime deleteBefore, int eventCount) {

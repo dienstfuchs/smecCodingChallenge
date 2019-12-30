@@ -14,7 +14,7 @@ import com.smec.codingchallengewebapi.entities.Event;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
 	@Query("select e from Event e where e.account =:account and e.happenedAt >= :startDate and e.happenedAt <=:endDate order by e.happenedAt asc")
-	List<Event> findByAccount(Account account, LocalDateTime startDate, LocalDateTime endDate);
+	List<Event> findByAccount(@Param("account")Account account, @Param("startDate")LocalDateTime startDate, @Param("endDate")LocalDateTime endDate);
 
 	@Modifying(clearAutomatically = true)
 	@Query("delete from Event e where e.happenedAt <:date")

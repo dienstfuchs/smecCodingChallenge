@@ -16,7 +16,8 @@ import com.smec.codingchallengewebapi.rest.event.EventDTO;
 public interface StatisticsRepository extends JpaRepository<Statistics, Long> {
 
 	@Query("select s from Statistics s where s.account =:account and s.day >= :startDate and s.day <=:endDate order by s.day asc, s.type asc")
-	List<Statistics> findByAccount(Account account, LocalDate startDate, LocalDate endDate);
+	List<Statistics> findByAccount(@Param("account") Account account, @Param("startDate") LocalDate startDate,
+			@Param("endDate") LocalDate endDate);
 
 	@Modifying(clearAutomatically = true)
 	@Query("update Statistics s set s.count = s.count + 1 where s.day = :day and s.type = :type and s.account = :account")
