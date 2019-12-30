@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -52,8 +51,8 @@ public class EventRepositoryTest {
 		entityManager.flush();
 
 		// when
-		List<Event> events = eventRepository.findByAccount(accountA, LocalDate.of(2020, 1, 1),
-				LocalDate.of(2020, 1, 1));
+		List<Event> events = eventRepository.findByAccount(accountA, LocalDateTime.of(2020, 1, 1, 0, 0),
+				LocalDateTime.of(2020, 1, 1, 13, 0));
 
 		// then
 		assertThat(events.size(), is(2));
@@ -80,13 +79,13 @@ public class EventRepositoryTest {
 		entityManager.persist(event4);
 		entityManager.persist(event5);
 
-		assertThat(eventRepository.findByAccount(accountA, LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 5)).size(),
+		assertThat(eventRepository.findByAccount(accountA, LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 5, 13, 0)).size(),
 				is(5));
 
-		assertThat(eventRepository.findByAccount(accountA, LocalDate.of(2020, 1, 5), LocalDate.of(2020, 1, 5)).size(),
+		assertThat(eventRepository.findByAccount(accountA, LocalDateTime.of(2020, 1, 5, 0, 0), LocalDateTime.of(2020, 1, 5, 13, 0)).size(),
 				is(1));
 
-		assertThat(eventRepository.findByAccount(accountA, LocalDate.of(2029, 1, 1), LocalDate.of(2020, 1, 3)).size(),
+		assertThat(eventRepository.findByAccount(accountA, LocalDateTime.of(2029, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 3, 13, 0)).size(),
 				is(0));
 
 	}

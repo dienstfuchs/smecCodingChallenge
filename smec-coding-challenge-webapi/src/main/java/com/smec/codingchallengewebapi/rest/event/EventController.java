@@ -1,6 +1,6 @@
 package com.smec.codingchallengewebapi.rest.event;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,8 +25,8 @@ public class EventController {
 
 	@GetMapping("/accounts/{accountName}/events")
 	public List<EventDTO> getAllEvents(@PathVariable String accountName,
-			@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate startDate,
-			@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate endDate) {
+			@RequestParam @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime startDate,
+			@RequestParam @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime endDate) {
 		return eventService.getAllEventsByAccountName(accountName, startDate, endDate);
 	}
 

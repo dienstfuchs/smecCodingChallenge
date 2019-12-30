@@ -1,11 +1,11 @@
 package com.smec.codingchallengewebapi.rest.event;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
 
-	List<EventDTO> getAllEventsByAccountName(String accountName, LocalDate startDate, LocalDate endDate);
+	List<EventDTO> getAllEventsByAccountName(String accountName, LocalDateTime startDate, LocalDateTime endDate);
 	
 	EventDTO createEvent(EventDTO event, String accountName);
 

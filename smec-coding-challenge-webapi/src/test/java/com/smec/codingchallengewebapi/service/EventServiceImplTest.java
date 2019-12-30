@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -61,7 +60,7 @@ public class EventServiceImplTest {
 
 		Mockito.when(accountRepository.findAccountByNameOrThrow("Account A")).thenThrow(AccountNotFoundException.class);
 		// when
-		eventService.getAllEventsByAccountName("Account A", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 1));
+		eventService.getAllEventsByAccountName("Account A", LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 1, 13, 0));
 		// then
 		Mockito.verify(accountRepository).findAccountByNameOrThrow("Account A");
 	}
@@ -74,17 +73,17 @@ public class EventServiceImplTest {
 		Event event2 = new Event(LocalDateTime.of(2020, 1, 1, 12, 0), "Event 2", accountA);
 
 		Mockito.when(accountRepository.findAccountByNameOrThrow("Account A")).thenReturn(accountA);
-		Mockito.when(eventRepository.findByAccount(accountA, LocalDate.of(2020, 1, 1),
-				LocalDate.of(2020, 1, 1))).thenReturn(List.of(event1, event2));
+		Mockito.when(eventRepository.findByAccount(accountA, LocalDateTime.of(2020, 1, 1, 0, 0),
+				LocalDateTime.of(2020, 1, 1, 13, 0))).thenReturn(List.of(event1, event2));
 
 		// when
-		List<EventDTO> eventDTOs = eventService.getAllEventsByAccountName("Account A", LocalDate.of(2020, 1, 1),
-				LocalDate.of(2020, 1, 1));
+		List<EventDTO> eventDTOs = eventService.getAllEventsByAccountName("Account A", LocalDateTime.of(2020, 1, 1, 0, 0),
+				LocalDateTime.of(2020, 1, 1, 13, 0));
 
 		// then
 		Mockito.verify(accountRepository).findAccountByNameOrThrow("Account A");
 		Mockito.verify(eventRepository)
-				.findByAccount(accountA, LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 1));
+				.findByAccount(accountA, LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 1, 13, 0));
 		assertThat(eventDTOs.size(), is(2));
 		assertThat(eventDTOs.get(0).getType(), is(equalTo("Event 1")));
 		assertThat(eventDTOs.get(1).getType(), is(equalTo("Event 2")));

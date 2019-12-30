@@ -118,12 +118,12 @@ class CodingChallengeWebapiApplicationTests {
 		createAndAssertEvent(event1E, accountE.getName());
 		createAndAssertEvent(event2E, accountE.getName());
 
-		getAndAssertEvents(accountD, List.of(event1D, event2D, event3D, event4D, event5D, event6D), "2019-01-01",
-				"2020-01-02");
-		getAndAssertEvents(accountD, List.of(event1D, event2D), "2019-01-01", "2020-01-01");
-		getAndAssertEvents(accountD, List.of(), "2017-01-01", "2018-01-01");
+		getAndAssertEvents(accountD, List.of(event1D, event2D, event3D, event4D, event5D, event6D), "2019-01-01T00:00",
+				"2020-01-02T13:00");
+		getAndAssertEvents(accountD, List.of(event1D, event2D), "2019-01-01T00:00", "2020-01-01T13:00");
+		getAndAssertEvents(accountD, List.of(), "2017-01-01T00:00", "2018-01-01T13:00");
 
-		getAndAssertEvents(accountE, List.of(event1E, event2E), "2019-01-01", "2020-01-02");
+		getAndAssertEvents(accountE, List.of(event1E, event2E), "2019-01-01T00:00", "2020-01-02T13:00");
 
 		StatisticsDTO statisticsD1 = new StatisticsDTO(LocalDate.of(2020, 1, 1), "Event 1D", 1);
 		StatisticsDTO statisticsD2 = new StatisticsDTO(LocalDate.of(2020, 1, 1), "Event 2D", 1);

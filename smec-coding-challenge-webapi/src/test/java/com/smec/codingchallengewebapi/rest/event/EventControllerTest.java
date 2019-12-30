@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,21 +34,21 @@ public class EventControllerTest {
 
 	@Test
 	public void getAllEventsWhenAccountNotExists() throws Exception {
-		when(eventService.getAllEventsByAccountName("Account A", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 1)))
+		when(eventService.getAllEventsByAccountName("Account A", LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 1, 14, 0)))
 				.thenThrow(AccountNotFoundException.class);
-		mvc.perform(get("/accounts/Account A/events").param("startDate", "2020-01-01").param("endDate", "2020-01-01"))
+		mvc.perform(get("/accounts/Account A/events").param("startDate", "2020-01-01T00:00").param("endDate", "2020-01-01T14:00"))
 				.andExpect(status().isNotFound());
 	}
 
 	@Test
 	public void getAllEvents() throws Exception {
-		EventDTO event1 = new EventDTO(LocalDateTime.of(2020, 1, 1, 12, 00), "Event 1");
-		EventDTO event2 = new EventDTO(LocalDateTime.of(2020, 1, 1, 13, 00), "Event 2");
+		EventDTO event1 = new EventDTO(LocalDateTime.of(2020, 1, 1, 12, 0), "Event 1");
+		EventDTO event2 = new EventDTO(LocalDateTime.of(2020, 1, 1, 13, 0), "Event 2");
 		List<EventDTO> events = List.of(event1, event2);
 
-		when(eventService.getAllEventsByAccountName("Account A", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 1)))
+		when(eventService.getAllEventsByAccountName("Account A", LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 1, 14, 0)))
 				.thenReturn(events);
-		mvc.perform(get("/accounts/Account A/events").param("startDate", "2020-01-01").param("endDate", "2020-01-01"))
+		mvc.perform(get("/accounts/Account A/events").param("startDate", "2020-01-01T00:00").param("endDate", "2020-01-01T14:00"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(2)))
 				.andExpect(jsonPath("$[0].type", is("Event 1")))

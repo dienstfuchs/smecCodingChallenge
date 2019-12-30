@@ -1,6 +1,6 @@
 package com.smec.codingchallengewebapi.service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +31,7 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
-	public List<EventDTO> getAllEventsByAccountName(String accountName, LocalDate startDate, LocalDate endDate) {
+	public List<EventDTO> getAllEventsByAccountName(String accountName, LocalDateTime startDate, LocalDateTime endDate) {
 		Account account = accountRepository.findAccountByNameOrThrow(accountName);
 		return eventRepository.findByAccount(account, startDate, endDate)
 				.stream()
