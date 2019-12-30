@@ -33,7 +33,7 @@ import com.smec.codingchallengewebapi.rest.event.EventDTO;
 import com.smec.codingchallengewebapi.rest.statistics.StatisticsDTO;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(properties = "deleteeventsscheduler.cron=-")
 @AutoConfigureMockMvc
 class CodingChallengeWebapiApplicationTests {
 

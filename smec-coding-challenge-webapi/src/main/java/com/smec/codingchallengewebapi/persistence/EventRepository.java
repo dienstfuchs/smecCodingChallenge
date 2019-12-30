@@ -3,6 +3,8 @@ package com.smec.codingchallengewebapi.persistence;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +19,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 	List<Event> findByAccount(@Param("account")Account account, @Param("startDate")LocalDateTime startDate, @Param("endDate")LocalDateTime endDate);
 
 	@Modifying(clearAutomatically = true)
+	@Transactional
 	@Query("delete from Event e where e.happenedAt <:date")
 	void deleteEventsBefore(@Param("date") LocalDateTime date);
 

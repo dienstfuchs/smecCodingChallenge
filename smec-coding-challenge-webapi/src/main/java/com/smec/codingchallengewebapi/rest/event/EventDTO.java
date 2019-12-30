@@ -61,5 +61,10 @@ public class EventDTO {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return getHappenedAt() + " - " + getType();
+	}
 
 }
