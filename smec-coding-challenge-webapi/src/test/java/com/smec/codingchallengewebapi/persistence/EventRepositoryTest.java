@@ -79,14 +79,52 @@ public class EventRepositoryTest {
 		entityManager.persist(event4);
 		entityManager.persist(event5);
 
-		assertThat(eventRepository.findByAccount(accountA, LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 5, 13, 0)).size(),
-				is(5));
+		assertThat(eventRepository
+				.findByAccount(accountA, LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 5, 13, 0))
+				.size(), is(5));
 
-		assertThat(eventRepository.findByAccount(accountA, LocalDateTime.of(2020, 1, 5, 0, 0), LocalDateTime.of(2020, 1, 5, 13, 0)).size(),
-				is(1));
+		assertThat(eventRepository
+				.findByAccount(accountA, LocalDateTime.of(2020, 1, 5, 0, 0), LocalDateTime.of(2020, 1, 5, 13, 0))
+				.size(), is(1));
 
-		assertThat(eventRepository.findByAccount(accountA, LocalDateTime.of(2029, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 3, 13, 0)).size(),
-				is(0));
+		assertThat(eventRepository
+				.findByAccount(accountA, LocalDateTime.of(2029, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 3, 13, 0))
+				.size(), is(0));
 
 	}
+
+	@Test
+	public void deleteEvents() {
+		deleteAndAssertEvents(LocalDateTime.of(2020, 1, 6, 11, 0), 0);
+		deleteAndAssertEvents(LocalDateTime.of(2020, 1, 5, 11, 0), 4);
+		deleteAndAssertEvents(LocalDateTime.of(2020, 1, 4, 11, 0), 3);
+		deleteAndAssertEvents(LocalDateTime.of(2020, 1, 1, 11, 0), 5);
+	}
+
+	private void deleteAndAssertEvents(LocalDateTime deleteBefore, int eventCount) {
+		Account accountA = new Account("Account A");
+
+		entityManager.persist(accountA);
+
+		Event event1 = new Event(LocalDateTime.of(2020, 1, 1, 12, 0), "Event A1", accountA);
+		Event event2 = new Event(LocalDateTime.of(2020, 1, 2, 12, 0), "Event A2", accountA);
+		Event event3 = new Event(LocalDateTime.of(2020, 1, 3, 12, 0), "Event A3", accountA);
+		Event event4 = new Event(LocalDateTime.of(2020, 1, 4, 12, 0), "Event A4", accountA);
+		Event event5 = new Event(LocalDateTime.of(2020, 1, 5, 12, 0), "Event A5", accountA);
+
+		entityManager.persist(event1);
+		entityManager.persist(event2);
+		entityManager.persist(event3);
+		entityManager.persist(event4);
+		entityManager.persist(event5);
+
+		// when
+		eventRepository.deleteEventsBefore(deleteBefore);
+
+		// then
+		assertThat(eventRepository
+				.findByAccount(accountA, LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 5, 13, 0))
+				.size(), is(eventCount));
+	}
+
 }
