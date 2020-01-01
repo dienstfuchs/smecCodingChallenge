@@ -27,7 +27,7 @@ public class AccoutRepositoryTest {
 
 	@Test
 	public void findAccountByNameNotExists() {
-		Account account = accountRepository.findByName("Account A");
+		Account account = accountRepository.findByNameOrderByNameAsc("Account A");
 		assertThat(account, is(nullValue()));
 	}
 
@@ -39,7 +39,7 @@ public class AccoutRepositoryTest {
 		entityManager.flush();
 
 		// when
-		Account account = accountRepository.findByName(givenAccount.getName());
+		Account account = accountRepository.findByNameOrderByNameAsc(givenAccount.getName());
 
 		// then
 		assertThat(account.getName(), is(equalTo(givenAccount.getName())));

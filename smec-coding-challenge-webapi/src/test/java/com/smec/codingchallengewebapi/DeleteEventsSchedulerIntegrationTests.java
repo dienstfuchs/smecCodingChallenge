@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +39,7 @@ public class DeleteEventsSchedulerIntegrationTests {
 
 	@Test
 	public void deleteEventsWithScheduler() throws Exception {
-		AccountDTO accountA = new AccountDTO("Account A");
+		AccountDTO accountA = new AccountDTO(UUID.randomUUID().toString());
 
 		createAndAssertAccount(accountA);
 

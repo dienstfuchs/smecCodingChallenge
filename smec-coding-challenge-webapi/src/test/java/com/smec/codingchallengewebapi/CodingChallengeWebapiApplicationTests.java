@@ -1,17 +1,17 @@
 package com.smec.codingchallengewebapi;
 
 import static com.smec.codingchallengewebapi.ResponseBodyMatchers.responseBody;
-import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.smec.codingchallengewebapi.rest.account.AccountDTO;
 import com.smec.codingchallengewebapi.rest.event.EventDTO;
 import com.smec.codingchallengewebapi.rest.statistics.StatisticsDTO;
@@ -51,25 +52,23 @@ class CodingChallengeWebapiApplicationTests {
 	@Test
 	@DirtiesContext
 	void accountsWorkflow() throws Exception {
-		AccountDTO accountA = new AccountDTO("Account A");
-		AccountDTO accountB = new AccountDTO("Account B");
-		AccountDTO accountC = new AccountDTO("Account C");
+		AccountDTO accountA = new AccountDTO(UUID.randomUUID().toString());
+		AccountDTO accountB = new AccountDTO(UUID.randomUUID().toString());
+		AccountDTO accountC = new AccountDTO(UUID.randomUUID().toString());
 
 		List<AccountDTO> accountAB = List.of(accountA, accountB);
-		List<AccountDTO> accountCB = List.of(accountC, accountB);
-
-		mvc.perform(get("/accounts").contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$", hasSize(0)));
+		List<AccountDTO> accountBC = List.of(accountB, accountC);
 
 		createAndAssertAccount(accountA);
 		createAndAssertAccount(accountB);
 
 		mvc.perform(get("/accounts").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$", hasSize(2)))
-				.andExpect(responseBody().containsObjectAsJson(accountAB, new TypeReference<List<AccountDTO>>() {
-				}));
+				.andDo(mvcResult -> {
+					String json = mvcResult.getResponse().getContentAsString();
+					assertIfAccountIsNotInList(accountA, json);
+					assertIfAccountIsNotInList(accountB, json);
+				});
 
 		mvc.perform(post("/accounts").content(objectMapper.writeValueAsString(accountA))
 				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().isConflict());
@@ -81,19 +80,33 @@ class CodingChallengeWebapiApplicationTests {
 
 		mvc.perform(get("/accounts").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(responseBody().containsObjectAsJson(accountCB, new TypeReference<List<AccountDTO>>() {
-				}));
+				.andDo(mvcResult -> {
+					String json = mvcResult.getResponse().getContentAsString();
+					assertIfAccountIsNotInList(accountB, json);
+					assertIfAccountIsNotInList(accountC, json);
+				});
 
 		mvc.perform(put("/accounts/" + accountB.getName()).content(objectMapper.writeValueAsString(accountC))
 				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().isConflict());
 
 	}
 
+	private void assertIfAccountIsNotInList(AccountDTO accountA, String json) {
+		int length = (int) (JsonPath.parse(json).read("$.length()"));
+		for (int i = 0; i < length; i++) {
+			String actualAccountName = JsonPath.parse(json).read("$.[" + i + "].name").toString();
+			if (accountA.getName().equals(actualAccountName)) {
+				return;
+			}
+		}
+		fail("Account: " + accountA.getName() + "was not found.");
+	}
+
 	@Test
 	@DirtiesContext
 	public void fullWorkflow() throws Exception {
-		AccountDTO accountD = new AccountDTO("Account D");
-		AccountDTO accountE = new AccountDTO("Account E");
+		AccountDTO accountD = new AccountDTO(UUID.randomUUID().toString());
+		AccountDTO accountE = new AccountDTO(UUID.randomUUID().toString());
 
 		createAndAssertAccount(accountD);
 		createAndAssertAccount(accountE);
@@ -143,8 +156,8 @@ class CodingChallengeWebapiApplicationTests {
 	@Test
 	@DirtiesContext
 	public void concurrentWorkflow() throws Exception {
-		AccountDTO accountF = new AccountDTO("Account F");
-		AccountDTO accountG = new AccountDTO("Account G");
+		AccountDTO accountF = new AccountDTO(UUID.randomUUID().toString());
+		AccountDTO accountG = new AccountDTO(UUID.randomUUID().toString());
 
 		createAndAssertAccount(accountF);
 		createAndAssertAccount(accountG);

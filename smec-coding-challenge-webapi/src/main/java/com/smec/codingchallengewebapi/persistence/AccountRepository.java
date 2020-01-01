@@ -7,10 +7,10 @@ import com.smec.codingchallengewebapi.rest.account.AccountNotFoundException;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
-	Account findByName(String name);
+	Account findByNameOrderByNameAsc(String name);
 
 	default Account findAccountByNameOrThrow(String accountName) {
-		Account account = findByName(accountName);
+		Account account = findByNameOrderByNameAsc(accountName);
 		if (account == null) {
 			throw new AccountNotFoundException(accountName);
 		}

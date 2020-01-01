@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+  coding-challenge-webapi:
+    build: .
+    container_name: coding-challenge-webapi
+    ports:
+    - 8080:8080
+    restart: always
+    depends_on:
+    - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_HIBERNATE_DDL-auto: update
+    networks:
+    - nw
+  db:
+    image: postgres:11
+    container_name: coding-challenge-webapi-postgres
+    ports:
+    - 5432:5432
+    volumes:
+    - db-data:/var/lib/postgresql/data
+    networks:
+    - nw
+volumes:
+  db-data:
+networks:
+  nw:

@@ -33,6 +33,14 @@ public class ResponseBodyMatchers {
 			assertThat(actualObject, is(expectedObject));
 		};
 	}
+	
+	public <T> ResultMatcher isSublist(Object expectedObject, Class<T> targetClass) {
+		return mvcResult -> {
+			String json = mvcResult.getResponse().getContentAsString();
+			T actualObject = objectMapper.readValue(json, targetClass);
+			assertThat(actualObject, is(expectedObject));
+		};
+	}
 
 	static ResponseBodyMatchers responseBody() {
 		return new ResponseBodyMatchers();
