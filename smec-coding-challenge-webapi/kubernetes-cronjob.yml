@@ -1,0 +1,22 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: coding-challenge-webapi-cronjob
+spec:
+  schedule: "0 * * * *"
+  #schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 0
+  failedJobsHistoryLimit: 0
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: coding-challenge-webapi-cronjob
+            image: buildpack-deps:curl
+            args:
+            - /bin/sh
+            - -ec
+            - curl http://coding-challenge-webapi:8080/accounts
+          restartPolicy: Never
