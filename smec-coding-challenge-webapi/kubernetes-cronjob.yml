@@ -18,5 +18,5 @@ spec:
             args:
             - /bin/sh
             - -ec
-            - curl http://coding-challenge-webapi:8080/accounts
+            - curl -X DELETE http://coding-challenge-webapi:8080/accounts/deleteOldEvents
           restartPolicy: Never
