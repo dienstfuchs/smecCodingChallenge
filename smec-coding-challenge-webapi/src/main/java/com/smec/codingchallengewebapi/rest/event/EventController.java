@@ -39,7 +39,7 @@ public class EventController {
 	@PostMapping("/accounts/{accountName}/events")
 	@ResponseStatus(code = HttpStatus.CREATED)
 	EventDTO createEvent(@RequestBody EventDTO event, @PathVariable String accountName) {
-		logger.info("createEvent(Account: '{}', Event: '{}') executed", accountName, event);
+		logger.debug("createEvent(Account: '{}', Event: '{}') executed", accountName, event);
 		return eventService.createEvent(event, accountName);
 	}
 	

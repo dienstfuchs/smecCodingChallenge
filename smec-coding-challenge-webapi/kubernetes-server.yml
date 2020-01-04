@@ -29,6 +29,8 @@ spec:
             value: org.hibernate.dialect.PostgreSQLDialect
           - name: SPRING_JPA_HIBERNATE_DDL-auto
             value: update
+          - name: deleteeventsscheduler.cron
+            value: '-'
 ---
 apiVersion: v1                  
 kind: Service                   
