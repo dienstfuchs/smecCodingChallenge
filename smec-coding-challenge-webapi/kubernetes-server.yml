@@ -1,0 +1,44 @@
+apiVersion: apps/v1             
+kind: Deployment                
+metadata:
+  name: coding-challenge-webapi
+spec:
+  replicas: 3
+  selector:                     
+    matchLabels:                
+      app: coding-challenge-webapi
+  template:                     
+    metadata:
+      labels:                   
+        app: coding-challenge-webapi
+    spec:                       
+      containers:
+      - name: smec-coding-challenge-webapi
+        image: smec-coding-challenge-webapi:latest
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 8080
+        env:
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:postgresql://db:5432/postgres
+          - name: SPRING_DATASOURCE_USERNAME
+            value: postgres
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: postgres
+          - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
+            value: org.hibernate.dialect.PostgreSQLDialect
+          - name: SPRING_JPA_HIBERNATE_DDL-auto
+            value: update
+---
+apiVersion: v1                  
+kind: Service                   
+metadata:
+  name: coding-challenge-webapi
+spec:          
+  selector:
+    app: coding-challenge-webapi
+  ports:                        
+  - name: http
+    port: 8080
+    nodePort: 30001
+  type: NodePort      
