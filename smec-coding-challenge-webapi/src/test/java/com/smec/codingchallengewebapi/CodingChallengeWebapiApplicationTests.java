@@ -2,6 +2,7 @@ package com.smec.codingchallengewebapi;
 
 import static com.smec.codingchallengewebapi.ResponseBodyMatchers.responseBody;
 import static org.junit.Assert.fail;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -9,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +46,9 @@ class CodingChallengeWebapiApplicationTests {
 	@Autowired
 	private MockMvc mvc;
 
+	@Autowired
+	private TestHelper testHelper;
+
 	/**
 	 * The Test uses the DAOs so that the tests are more readable. The json
 	 * serialization/deserialization is tested in AccountControllerTest,
@@ -56,11 +61,8 @@ class CodingChallengeWebapiApplicationTests {
 		AccountDTO accountB = new AccountDTO(UUID.randomUUID().toString());
 		AccountDTO accountC = new AccountDTO(UUID.randomUUID().toString());
 
-		List<AccountDTO> accountAB = List.of(accountA, accountB);
-		List<AccountDTO> accountBC = List.of(accountB, accountC);
-
-		createAndAssertAccount(accountA);
-		createAndAssertAccount(accountB);
+		testHelper.createAndAssertAccount(accountA);
+		testHelper.createAndAssertAccount(accountB);
 
 		mvc.perform(get("/accounts").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -108,8 +110,8 @@ class CodingChallengeWebapiApplicationTests {
 		AccountDTO accountD = new AccountDTO(UUID.randomUUID().toString());
 		AccountDTO accountE = new AccountDTO(UUID.randomUUID().toString());
 
-		createAndAssertAccount(accountD);
-		createAndAssertAccount(accountE);
+		testHelper.createAndAssertAccount(accountD);
+		testHelper.createAndAssertAccount(accountE);
 
 		EventDTO event1D = new EventDTO(LocalDateTime.of(2020, 01, 01, 12, 00), "Event 1D");
 		EventDTO event2D = new EventDTO(LocalDateTime.of(2020, 01, 01, 12, 01), "Event 2D");
@@ -121,22 +123,22 @@ class CodingChallengeWebapiApplicationTests {
 		EventDTO event1E = new EventDTO(LocalDateTime.of(2020, 01, 02, 12, 04), "Event 1E");
 		EventDTO event2E = new EventDTO(LocalDateTime.of(2020, 01, 02, 12, 05), "Event 1E");
 
-		createAndAssertEvent(event1D, accountD.getName());
-		createAndAssertEvent(event2D, accountD.getName());
-		createAndAssertEvent(event3D, accountD.getName());
-		createAndAssertEvent(event4D, accountD.getName());
-		createAndAssertEvent(event5D, accountD.getName());
-		createAndAssertEvent(event6D, accountD.getName());
+		testHelper.createAndAssertEvent(event1D, accountD.getName());
+		testHelper.createAndAssertEvent(event2D, accountD.getName());
+		testHelper.createAndAssertEvent(event3D, accountD.getName());
+		testHelper.createAndAssertEvent(event4D, accountD.getName());
+		testHelper.createAndAssertEvent(event5D, accountD.getName());
+		testHelper.createAndAssertEvent(event6D, accountD.getName());
 
-		createAndAssertEvent(event1E, accountE.getName());
-		createAndAssertEvent(event2E, accountE.getName());
+		testHelper.createAndAssertEvent(event1E, accountE.getName());
+		testHelper.createAndAssertEvent(event2E, accountE.getName());
 
-		getAndAssertEvents(accountD, List.of(event1D, event2D, event3D, event4D, event5D, event6D), "2019-01-01T00:00",
+		testHelper.getAndAssertEvents(accountD, List.of(event1D, event2D, event3D, event4D, event5D, event6D), "2019-01-01T00:00",
 				"2020-01-02T13:00");
-		getAndAssertEvents(accountD, List.of(event1D, event2D), "2019-01-01T00:00", "2020-01-01T13:00");
-		getAndAssertEvents(accountD, List.of(), "2017-01-01T00:00", "2018-01-01T13:00");
+		testHelper.getAndAssertEvents(accountD, List.of(event1D, event2D), "2019-01-01T00:00", "2020-01-01T13:00");
+		testHelper.getAndAssertEvents(accountD, List.of(), "2017-01-01T00:00", "2018-01-01T13:00");
 
-		getAndAssertEvents(accountE, List.of(event1E, event2E), "2019-01-01T00:00", "2020-01-02T13:00");
+		testHelper.getAndAssertEvents(accountE, List.of(event1E, event2E), "2019-01-01T00:00", "2020-01-02T13:00");
 
 		StatisticsDTO statisticsD1 = new StatisticsDTO(LocalDate.of(2020, 1, 1), "Event 1D", 1);
 		StatisticsDTO statisticsD2 = new StatisticsDTO(LocalDate.of(2020, 1, 1), "Event 2D", 1);
@@ -159,8 +161,8 @@ class CodingChallengeWebapiApplicationTests {
 		AccountDTO accountF = new AccountDTO(UUID.randomUUID().toString());
 		AccountDTO accountG = new AccountDTO(UUID.randomUUID().toString());
 
-		createAndAssertAccount(accountF);
-		createAndAssertAccount(accountG);
+		testHelper.createAndAssertAccount(accountF);
+		testHelper.createAndAssertAccount(accountG);
 
 		ExecutorService executor = Executors.newFixedThreadPool(10);
 
@@ -207,10 +209,35 @@ class CodingChallengeWebapiApplicationTests {
 
 	}
 
+	@Test
+	public void deleteEvents() throws Exception {
+		AccountDTO accountA = new AccountDTO(UUID.randomUUID().toString());
+
+		testHelper.createAndAssertAccount(accountA);
+
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime nowNotExact = LocalDateTime.of(now.toLocalDate(), LocalTime.of(now.getHour(), now.getMinute()));
+
+		EventDTO event1 = new EventDTO(nowNotExact.minusDays(31), "Event 1");
+		EventDTO event2 = new EventDTO(nowNotExact.minusDays(35), "Event 2");
+		EventDTO event3 = new EventDTO(nowNotExact.minusDays(20), "Event 3");
+		EventDTO event4 = new EventDTO(nowNotExact.minusDays(1), "Event 4");
+
+		testHelper.createAndAssertEvent(event1, accountA.getName());
+		testHelper.createAndAssertEvent(event2, accountA.getName());
+		testHelper.createAndAssertEvent(event3, accountA.getName());
+		testHelper.createAndAssertEvent(event4, accountA.getName());
+
+		mvc.perform(delete("/accounts/deleteOldEvents")).andExpect(status().isOk());
+
+		testHelper.getAndAssertEvents(accountA, List.of(event3, event4), LocalDateTime.now().minusDays(32).toString(),
+				LocalDateTime.now().toString());
+	}
+
 	private void addEvents(LocalDateTime dateTime, String eventName, String accountName) {
 		for (int i = 0; i < 1000; i++) {
 			try {
-				createAndAssertEvent(new EventDTO(dateTime, eventName), accountName);
+				testHelper.createAndAssertEvent(new EventDTO(dateTime, eventName), accountName);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -227,28 +254,4 @@ class CodingChallengeWebapiApplicationTests {
 				}));
 	}
 
-	private void getAndAssertEvents(AccountDTO account, List<EventDTO> events, String startDate, String endDate)
-			throws Exception {
-		mvc.perform(get("/accounts/" + account.getName() + "/events").param("startDate", startDate)
-				.param("endDate", endDate)
-				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpect(responseBody().containsObjectAsJson(events, new TypeReference<List<EventDTO>>() {
-				}));
-
-	}
-
-	private void createAndAssertEvent(EventDTO eventDTO, String accountName) throws Exception {
-		mvc.perform(post("/accounts/" + accountName + "/events").content(objectMapper.writeValueAsString(eventDTO))
-				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isCreated())
-				.andExpect(responseBody().containsObjectAsJson(eventDTO, EventDTO.class));
-	}
-
-	private void createAndAssertAccount(AccountDTO account) throws Exception {
-		mvc.perform(post("/accounts").content(objectMapper.writeValueAsString(account))
-				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isCreated())
-				.andExpect(responseBody().containsObjectAsJson(account, AccountDTO.class));
-	}
 }

@@ -2,7 +2,10 @@ package com.smec.codingchallengewebapi.rest.event;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,10 +37,10 @@ public class EventControllerTest {
 
 	@Test
 	public void getAllEventsWhenAccountNotExists() throws Exception {
-		when(eventService.getAllEventsByAccountName("Account A", LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 1, 14, 0)))
-				.thenThrow(AccountNotFoundException.class);
-		mvc.perform(get("/accounts/Account A/events").param("startDate", "2020-01-01T00:00").param("endDate", "2020-01-01T14:00"))
-				.andExpect(status().isNotFound());
+		when(eventService.getAllEventsByAccountName("Account A", LocalDateTime.of(2020, 1, 1, 0, 0),
+				LocalDateTime.of(2020, 1, 1, 14, 0))).thenThrow(AccountNotFoundException.class);
+		mvc.perform(get("/accounts/Account A/events").param("startDate", "2020-01-01T00:00")
+				.param("endDate", "2020-01-01T14:00")).andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -46,15 +49,23 @@ public class EventControllerTest {
 		EventDTO event2 = new EventDTO(LocalDateTime.of(2020, 1, 1, 13, 0), "Event 2");
 		List<EventDTO> events = List.of(event1, event2);
 
-		when(eventService.getAllEventsByAccountName("Account A", LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 1, 14, 0)))
-				.thenReturn(events);
-		mvc.perform(get("/accounts/Account A/events").param("startDate", "2020-01-01T00:00").param("endDate", "2020-01-01T14:00"))
+		when(eventService.getAllEventsByAccountName("Account A", LocalDateTime.of(2020, 1, 1, 0, 0),
+				LocalDateTime.of(2020, 1, 1, 14, 0))).thenReturn(events);
+		mvc.perform(get("/accounts/Account A/events").param("startDate", "2020-01-01T00:00")
+				.param("endDate", "2020-01-01T14:00"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(2)))
 				.andExpect(jsonPath("$[0].type", is("Event 1")))
 				.andExpect(jsonPath("$[0].happenedAt", is("2020-01-01T12:00:00")))
 				.andExpect(jsonPath("$[1].type", is("Event 2")))
 				.andExpect(jsonPath("$[1].happenedAt", is("2020-01-01T13:00:00")));
+	}
+
+	@Test
+	public void deleteOldEventsTest() throws Exception {
+		doNothing().when(eventService).deleteOldEvents();
+		mvc.perform(delete("/accounts/deleteOldEvents")).andExpect(status().isOk());
+		verify(eventService).deleteOldEvents();
 	}
 
 	@Test

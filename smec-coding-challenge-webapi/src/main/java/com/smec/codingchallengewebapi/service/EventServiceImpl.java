@@ -18,6 +18,8 @@ import com.smec.codingchallengewebapi.rest.statistics.StatisticsService;
 @Component
 public class EventServiceImpl implements EventService {
 
+	private static final int DAYS = 30;
+	
 	@Autowired
 	private AccountRepository accountRepository;
 	@Autowired
@@ -46,6 +48,11 @@ public class EventServiceImpl implements EventService {
 		EventDTO createdEventDTO = eventConverter.toDTO(createdEvent);
 		statisticsService.createStatisticsForEvent(createdEventDTO, account);
 		return createdEventDTO;
+	}
+
+	@Override
+	public void deleteOldEvents() {
+		eventRepository.deleteEventsBefore(LocalDateTime.now().minusDays(DAYS));
 	}
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +35,12 @@ public class EventController {
 	@ResponseStatus(code = HttpStatus.CREATED)
 	EventDTO createEvent(@RequestBody EventDTO event, @PathVariable String accountName) {
 		return eventService.createEvent(event, accountName);
+	}
+	
+	@DeleteMapping("/accounts/deleteOldEvents")
+	@ResponseStatus(code = HttpStatus.OK)
+	void deleteOldEvents() {
+		eventService.deleteOldEvents();
 	}
 
 }

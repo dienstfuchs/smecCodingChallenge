@@ -8,5 +8,7 @@ public interface EventService {
 	List<EventDTO> getAllEventsByAccountName(String accountName, LocalDateTime startDate, LocalDateTime endDate);
 	
 	EventDTO createEvent(EventDTO event, String accountName);
+	
+	void deleteOldEvents();
 
 }

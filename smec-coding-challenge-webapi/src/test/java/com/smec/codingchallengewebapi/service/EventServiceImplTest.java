@@ -60,7 +60,8 @@ public class EventServiceImplTest {
 
 		Mockito.when(accountRepository.findAccountByNameOrThrow("Account A")).thenThrow(AccountNotFoundException.class);
 		// when
-		eventService.getAllEventsByAccountName("Account A", LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 1, 13, 0));
+		eventService.getAllEventsByAccountName("Account A", LocalDateTime.of(2020, 1, 1, 0, 0),
+				LocalDateTime.of(2020, 1, 1, 13, 0));
 		// then
 		Mockito.verify(accountRepository).findAccountByNameOrThrow("Account A");
 	}
@@ -77,8 +78,8 @@ public class EventServiceImplTest {
 				LocalDateTime.of(2020, 1, 1, 13, 0))).thenReturn(List.of(event1, event2));
 
 		// when
-		List<EventDTO> eventDTOs = eventService.getAllEventsByAccountName("Account A", LocalDateTime.of(2020, 1, 1, 0, 0),
-				LocalDateTime.of(2020, 1, 1, 13, 0));
+		List<EventDTO> eventDTOs = eventService.getAllEventsByAccountName("Account A",
+				LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2020, 1, 1, 13, 0));
 
 		// then
 		Mockito.verify(accountRepository).findAccountByNameOrThrow("Account A");
