@@ -17,7 +17,6 @@ public class DeleteEventsScheduler {
 	EventService eventService;
 	
 	public DeleteEventsScheduler() {
-		System.out.println("test");
 	}
 	
 	@Scheduled(cron = "${deleteeventsscheduler.cron:-}")
